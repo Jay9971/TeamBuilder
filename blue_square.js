@@ -25,7 +25,7 @@ function sendToServer() {
     } else {
       newList.push(1);
     }    
-
+  console.log("sending");
   fetch('10.0.0.49:8080/sendData', {
     method: 'POST',
     headers: {
