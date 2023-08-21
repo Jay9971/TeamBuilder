@@ -1,23 +1,4 @@
 
-let myVariable = 0;
-let changeListeners = [];
-
-function setMyVariable(value) {
-  myVariable = value;
-  // Notify all listeners that the variable has changed
-  for (const listener of changeListeners) {
-    listener(myVariable);
-  }
-}
-
-function addChangeListener(callback) {
-  changeListeners.push(callback);
-}
-
-// Example: Add a listener to react when myVariable changes
-addChangeListener((newValue) => {
-  console.log(`myVariable changed to ${newValue}`);
-});
 
 const blueSquare = document.getElementById("blueSquare");
 const bank = document.getElementById("bank");
@@ -50,11 +31,11 @@ function sendToServer() {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(newList)
+    body: "hello"
   })
     .then(response => response.json())
     .then(data => {
-      console.log(newList);
+      console.log(data);
     })
     .catch(error => {
       console.error('Error:', error);
