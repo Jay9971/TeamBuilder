@@ -1,3 +1,24 @@
+
+let myVariable = 0;
+let changeListeners = [];
+
+function setMyVariable(value) {
+  myVariable = value;
+  // Notify all listeners that the variable has changed
+  for (const listener of changeListeners) {
+    listener(myVariable);
+  }
+}
+
+function addChangeListener(callback) {
+  changeListeners.push(callback);
+}
+
+// Example: Add a listener to react when myVariable changes
+addChangeListener((newValue) => {
+  console.log(`myVariable changed to ${newValue}`);
+});
+
 const blueSquare = document.getElementById("blueSquare");
 const bank = document.getElementById("bank");
 
@@ -23,9 +44,27 @@ function sendToServer() {
     } else {
       newList.push(1);
     }    
+
+  fetch('10.0.0.49:8080/sendData', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newList)
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(newList);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  
   /* send newList to server */
   }
 }
+
+
 function updateImages(obj, number) {
   obj.style.backgroundColor = usedList[number];
   if (server_occupied_list[number] === 2) {
@@ -121,7 +160,7 @@ function updateGridDimensions() {
   
 
 window.addEventListener('resize', updateGridDimensions);
-
+window.addEventListener('click', sendData);
 // add event listener for recieving server info, update grid dimensions
 
 updateGridDimensions();
