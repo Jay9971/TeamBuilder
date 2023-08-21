@@ -141,7 +141,7 @@ function updateGridDimensions() {
   
 
 window.addEventListener('resize', updateGridDimensions);
-window.addEventListener('click', sendData);
+window.addEventListener('click', sendToServer);
 // add event listener for recieving server info, update grid dimensions
 
 updateGridDimensions();
