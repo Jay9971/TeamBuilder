@@ -13,9 +13,7 @@ function printMessage(message) {
 
 // Add event listener to the send button (not implemented)
 sendButton.addEventListener('click', () => {
-    // This function will be called when the button is clicked
-    // You can implement the logic to send the message here
+    /* this is where you write code to send shit to the server*/
 });
 
-// You can call the printMessage function to print messages to the screen
-// Example: printMessage('Hello, world!');
+/* add another thing so that every time the client recieves data, it calls printmessage with that data */
