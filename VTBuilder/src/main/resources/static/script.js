@@ -33,7 +33,7 @@ function post(path, params, method='post') {
 // Add event listener to the send button (not implemented)
 sendButton.addEventListener('click', () => {
     let data = document.querySelector("input").value;
-    post("#", {name: "data", data: data});
+    post("", {name: "data", data: data});
     
 });
 
