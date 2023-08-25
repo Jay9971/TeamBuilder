@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Splitting and Display</title>
+  <style>
+    /* Add your CSS styles here */
+    .image-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 400px;
+    }
+    
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+  <script>
+    // Original image link
+    const originalImageLink = "wallpaper2you_201539.jpeg";
+
+    // Split the image and generate the ninth image link
+    const ninthImageLink = splitAndGenerateNinthImageLink(originalImageLink);
+
+    // Function to split and generate the ninth image link
+    function splitAndGenerateNinthImageLink(originalLink) {
+      const img = new Image();
+      img.src = originalLink;
+
+      // Create a canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Set canvas dimensions to match the image
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Draw the image on the canvas
+      ctx.drawImage(img, 0, 0);
+
+      // Split image into 9 equal squares
+      const squareSize = Math.floor(img.width / 3);
+      const ninthImage = document.createElement('canvas');
+      ninthImage.width = squareSize;
+      ninthImage.height = squareSize;
+      const ninthCtx = ninthImage.getContext('2d');
+
+      // Extract the bottom right square
+      ninthCtx.drawImage(canvas, squareSize, squareSize, squareSize, squareSize, 0, 0, squareSize, squareSize);
+
+      // Convert canvas to data URL
+      const ninthImageDataUrl = ninthImage.toDataURL('image/jpeg');
+
+      return ninthImageDataUrl;
+    }
+
+    // DOMContentLoaded event
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get the ninthImage element by its id
+      const ninthImageElement = document.getElementById('ninthImage');
+
+      // Set the src attribute of the ninthImage element to the ninth image link
+      ninthImageElement.src = ninthImageLink;
+    });
+  </script>
+</head>
+<body>
+  <!-- Container to display the ninth image -->
+  <div class="image-container">
+    <img id="ninthImage" src="" alt="Ninth Image">
+  </div>
+</body>
+</html>
