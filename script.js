@@ -13,7 +13,7 @@ function printMessage(message) {
 
 
 function post(path, params, method='post') {
-	const form = document.createElement('form');
+    const form = document.createElement('form');
     form.method = method;
     form.action = path;
     
@@ -30,11 +30,16 @@ function post(path, params, method='post') {
     
 }
 
+function get(path, method='get') {
+    fetch(path)
+	.then(response => response.text())
+	.then(text => return text)
+}
+
 // Add event listener to the send button (not implemented)
 sendButton.addEventListener('click', () => {
     let data = document.querySelector("input").value;
     post("", {name: "data", data: data});
-    
 });
 
 /* add another thing so that every time the client recieves data, it calls printmessage with that data */
