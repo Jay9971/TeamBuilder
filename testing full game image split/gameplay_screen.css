@@ -1,0 +1,129 @@
+/* optimize this later to prevent excess repitition of things like flex, centering, etc */
+
+body {
+  margin: 0;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+/* background*/
+.grid-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-gap: 0px;
+  justify-content: center; 
+  align-content: center; 
+  overflow: hidden; 
+  z-index: -1;
+}
+.grid-item {
+  width: 100%;
+  height: 100%;
+  background-color: beige; /* Default color */
+}
+
+/* holds game stuff*/
+.game-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+}
+
+/* VTBuilder Logo*/
+.logo {
+  height:20vh;
+  width: 100vw;
+}
+.logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+  margin: 0 auto; /* Center the image horizontally */
+}
+
+/* contains interactive game elements*/
+.container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+/*style for orientation-changing columns (they become rows on a narrow screen)*/
+.column {
+  width:50vw;
+  height:100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*left column: has image bank, voice button, player list, leave game*/
+#column-one {
+  flex-direction: column;
+}
+.player-interactions {
+  width: 100%;
+  height: 50%;
+}
+.bank {
+  width: 50%;
+  height:50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}  
+.bank-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+} 
+.square {
+  width: 80px;
+  height: 80px;
+}
+
+/* make the square shrink or something bruh this is unbelivable. might have to use bootstrap or something to make a grid. it only resizes to fit the width, but lets height overflow for some reason.*/
+.game-square {
+  height: 55%;
+  width: 55%;
+  max-height: 55%;
+  max-width: 55%;
+  position: relative;
+  display: grid;
+  grid-gap: 2px;
+  overflow: hidden; /* Prevent overflow of squares */
+
+}
+.square {
+  width: 100px;
+  height: 100px;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: grey; /* Default color */
+}
+
+/*displaying images*/
+.image {
+  width: 100%;
+  height: 100%;
+}
+.canvas {
+  width:100%;
+  height:100%;
+}
