@@ -1,5 +1,5 @@
 /* request for starting data, assign to original_server_data */
-const original_server_data = "09wallpaper2you_201539.jpegCOORDINATES0708";
+const original_server_data = "09wallpaper2you_201539.jpegCOORDINATES030004060708";
 
 /* internet link for a transparent overlay, can be downloaded file idk */
 const transp_link = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
@@ -46,7 +46,7 @@ const gapSize = 1; // Adjust the gap between squares as needed
 
 /*0 = unoccupied, 1 =occupied by user, 2 = occupied by someone else*/
 //redefine this before the request function when you actually implement
-let server_occupied_list = [0,2,0,0,2,2,0,0,0]
+let server_occupied_list = [0,0,0,0,2,2,0,0,0]
 
 // link to the currently selected image
 let selected = null;
@@ -101,12 +101,12 @@ function populateBankList() {
 // obj is the square grid object, im is the image object on top, number is the single coordinate number of the image/grid object
 function updateImages(obj, im, number) {
   // sets all backgrounds to gray by default with a transparent image
-  obj.style.backgroundColor = "gray";
+  obj.style.backgroundColor = "transparent";
   im.src = usedList[number];
 
   //all occupied squares are set to red with no event listeners
   if (server_occupied_list[number] === 2) {
-    obj.style.backgroundColor = 'red'
+    obj.style.backgroundColor = 'darkred'
   }
 
   // could be rewritten a little more efficiently so there is no event listener for every single square. put if conditions outside event listeners
@@ -174,7 +174,7 @@ function updateImages(obj, im, number) {
   //remove white color when mouse is not hovering
   obj.addEventListener("mouseleave", () => {
     if (server_occupied_list[number] === 0) {
-      obj.style.backgroundColor = "grey";
+      obj.style.backgroundColor = "transparent";
     }
   });  
 }
@@ -230,3 +230,26 @@ setTimeout(() => {
   console.log('Interval stopped');
 }, 10000); // 10000 milliseconds = 10 seconds
 */
+
+
+function updateFontSize() {
+  const titleContainer = document.getElementById('bank-row');
+  const title = document.getElementById('title-2');
+  
+  // Calculate the font size based on the container's width
+  const containerWidth = titleContainer.offsetWidth;
+  const fontSize = containerWidth * 0.05; // Adjust the multiplier as needed
+  
+  // Apply the calculated font size to the title
+  title.style.fontSize = fontSize + 'px';
+}
+
+
+// Call the updateFontSize function on window resize
+window.addEventListener('resize', updateFontSize);
+
+// Call the updateFontSize function initially to set the font size
+
+document.addEventListener("DOMContentLoaded", function () {
+  updateFontSize();
+});

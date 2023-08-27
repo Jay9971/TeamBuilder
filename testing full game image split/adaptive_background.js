@@ -1,5 +1,5 @@
-const gridContainer = document.getElementById("gridContainer");
-const shades = ["#f5f5dc", "#fff8dc", "#fdf5e6", "#faf0e6"]; // Add more or different shades if needed
+const gridContainer = document.getElementById("grid-container");
+const shades = ["#4470ad", "#6888be", "#99afd7", "#ccdbee","233c67"]; // Add more or different shades if needed
 
 function getRandomColor() {
     const randomIndex = Math.floor(Math.random() * shades.length);
@@ -39,5 +39,8 @@ function updateGridDimensions() {
 window.addEventListener('resize', updateGridDimensions);
 
 // Initial call to set the initial grid dimensions
-updateGridDimensions();
+
+document.addEventListener("DOMContentLoaded", function () {
+  updateGridDimensions();
+});
 

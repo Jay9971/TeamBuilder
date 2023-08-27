@@ -13,18 +13,18 @@ function createBankItem(url) {
   const image = document.createElement("img");
   image.id = url; 
   image.src = url; 
-  image.classList.add("image");
+  image.classList.add("bank-image");
 
   //adds event listener so if it is clicked, it is highlighted and selected is set to the right url
   //if selected and clicked it deselects, if something else is selected it replaces the url
   square.addEventListener("click", () => {
-    var squareElements = document.getElementsByClassName("color-column");
+    var squareElements = document.getElementsByClassName("bank-column");
     for (var i = 0; i < squareElements.length; i++) {
-      squareElements[i].style.border = "none";
+      squareElements[i].style.border = "3px solid transparent";
     }
     if (selected !== url) {
       selected = url;
-      column.style.border = "1px solid black";
+      column.style.border = "3px solid white";
     } else {
       selected = null;
     }

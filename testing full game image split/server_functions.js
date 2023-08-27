@@ -24,5 +24,6 @@ function request(path) {
 	.then(text => text);
     */
 }
-
+/*
 post("/send-square-locations-data, /get-square-location-data", {name: "data", data: data});
+*/
