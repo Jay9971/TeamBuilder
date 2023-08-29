@@ -1,0 +1,22 @@
+.collapsible-container {
+    display: flex;
+    align-items: flex-start; /* Align items to the top of the container */
+  }
+  
+  .collapsible-section {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    transition: display 0.3s ease-in-out;
+    flex: 1; /* Take up remaining space */
+  }
+  
+  .collapsible-section.show {
+    display: block;
+  }
+  
+  .collapsible-button {
+    margin-top: 10px;
+    margin-right: 10px; /* Add space between button and section */
+  }
+  

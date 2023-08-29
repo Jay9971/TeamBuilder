@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split Image into Squares</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="original">
+        <img class="image" id="displayOriginal" src="wallpaper2you_201539.jpeg">
+    </div>
+    <div class="new">
+        <img class="image" id="new" src="">
+    </div>
+  <img id="originalImage" src="wallpaper2you_201539.jpeg" style="display: none;">
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const originalImage = document.getElementById("originalImage");
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size to the same as the original image
+        canvas.width = originalImage.width;
+        canvas.height = originalImage.height;
+
+        // Draw the original image on the canvas
+        ctx.drawImage(originalImage, 0, 0);
+
+        // Define the number of rows and columns for splitting
+        const rows = 3;
+        const cols = 3;
+        
+        const newImageUrls = [];
+
+        // Loop through rows and columns to create new images
+        for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const squareWidth = canvas.width / cols;
+            const squareHeight = canvas.height / rows;
+            
+            // Create a new canvas for each square
+            const squareCanvas = document.createElement("canvas");
+            squareCanvas.width = squareWidth;
+            squareCanvas.height = squareHeight;
+            const squareCtx = squareCanvas.getContext("2d");
+            
+            // Extract the square from the original image and draw it on the new canvas
+            squareCtx.drawImage(
+            canvas,
+            col * squareWidth, row * squareHeight,
+            squareWidth, squareHeight,
+            0, 0,
+            squareWidth, squareHeight
+            );
+            
+            // Generate a new image URL for the square
+            const newImageUrl = squareCanvas.toDataURL("image/jpeg"); // Or "image/png"
+            newImageUrls.push(newImageUrl);
+        }
+        }
+
+        // Now you have an array of new image URLs in `newImageUrls`
+        console.log(newImageUrls);
+        const newPiece = document.getElementById("new");
+        newPiece.src = newImageUrls[3];
+    });
+
+    
+
+  </script>
+</body>
+</html>

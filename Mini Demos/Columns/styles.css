@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100vh; /* Make the container fill the screen height */
+  width: 100vw;
+  flex-direction: row;
+}
+
+.column {
+  width: 50vw; /* Make the columns fill half of the screen width */
+  height: 100vh; /* Make the columns fill the screen height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgray;
+}
+
+#column-one {
+  background-color: lightblue;
+}
+
+#column-two {
+  background-color: lightgreen;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square-container {
+  position: relative;
+  background-color: ;
+  
+
+}
+
+
