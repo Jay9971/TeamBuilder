@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two-Column Layout</title>
+<link rel="stylesheet" href="lobby.css">
+</head>
+<body>
+<div class="logo">
+  <img src="Screen_Shot_2023-08-22_at_6.17.50_PM-removebg-preview (1).png" alt="Logo">
+</div>
+<div class="container">
+  <div class="column" id="column-one">
+    <div class="row" id="left-top">
+      <div class="column" id="voice">
+        <button id="toggleButton" class="circle-button"></button>
+      </div>
+      <div class="column" id="players">
+        <div id="player-box">
+          <div id="title">Players</div>
+          <div id="listbox"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row" id="left-bottom">
+      <div class="column">
+        <button id="startButton" class="control-button">Start Game</button>
+      </div>
+      <div class="column">
+        <button id="closeButton" class="control-button">Close Lobby</button>
+      </div>
+    </div>
+  </div>
+  <div class="column" id="column-two">
+    <div class="blue-square" id="blueSquare">Rules and Gameplay</div>
+  </div>
+</div>
+<script src="lobby.js"></script>
+</body>
+</html>

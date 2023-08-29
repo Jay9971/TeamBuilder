@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jay9971.VTBuilder.Repository.ArchiveRepository;
+import com.jay9971.VTBuilder.Repository.Users;
+import com.jay9971.VTBuilder.Repository.UsersRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jay9971.VTBuilder.Repository.Archive;
 
 import jakarta.annotation.Resource;
@@ -35,7 +40,10 @@ public class VTBuilderController {
 	private ImageManager imgManager;
 	
 	@Autowired
-	private ArchiveRepository repository;
+	private ArchiveRepository archiveRepo;
+	
+	@Autowired
+	private UsersRepository usersRepo;
 	
 	
 	/** Redirects to login page from default page **/
@@ -94,7 +102,7 @@ public class VTBuilderController {
 	@RequestMapping(value = "/get-square-locations-data", method=RequestMethod.GET)
 	@ResponseBody
 	public String sendData() {
-		Optional<Archive> repo_data = repository.findById(1l);
+		Optional<Archive> repo_data = archiveRepo.findById(1l);
 		if (!repo_data.isPresent()) {
 			return null;
 		}
@@ -113,29 +121,60 @@ public class VTBuilderController {
 	
 	
 	
+	@RequestMapping(value="/lobby", method=RequestMethod.GET)
+	@ResponseBody
+    public ModelAndView lobby(@RequestParam("userid") String userid) {
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.setViewName("lobby.html");
+        modelAndView.addObject("userid", userid);
+	    return modelAndView;
+	}
 	
 	
 	
 	
-	
-	
-	// LOGIN TESTER BULLSHIT
+
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView login() {
 	    ModelAndView modelAndView = new ModelAndView();
-	    modelAndView.setViewName("text.html");
+	    modelAndView.setViewName("login.html");
 	    return modelAndView;
 	}
 	
-	@RequestMapping(value="login", method=RequestMethod.POST)
+	/** Login join lobby request mapping **/
+	@RequestMapping(value="/send_data", method=RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView recieveMovement(@RequestParam String data) {
-		logger.info(data);
-	    ModelAndView modelAndView = new ModelAndView();
-	    modelAndView.setViewName("redirect:/game");
-	    return modelAndView;
+	public ResponseEntity<String> recieveLobbyCode(@RequestBody String data) {
+		try {
+			logger.info(data);
+			ObjectMapper objMapper = new ObjectMapper();
+			LoginRequestData rqData = objMapper.readValue(data, LoginRequestData.class);
+			logger.info(rqData.toString());
+			
+			// calculates new user id based on past users and creates a new user entry in the repo
+			long total_users = usersRepo.count();
+			long newID = total_users + 1;
+			Users new_user = new Users(newID, rqData.getName(), "", (long)Integer.parseInt(rqData.getCode()));
+			usersRepo.save(new_user);
+			
+			
+			
+			// response handling
+		    LoginResponseData dataObj = new LoginResponseData();
+		    dataObj.setCode(Integer.toString((int)(newID)));
+		    logger.info(dataObj.getCode());
+		    dataObj.setUrl("lobby");
+		    
+		    String jsonData = objMapper.writeValueAsString(dataObj);
+		    
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.APPLICATION_JSON);
+		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 }

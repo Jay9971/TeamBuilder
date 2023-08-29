@@ -8,9 +8,10 @@ public class Archive {
 	
 	private String image;
 	
-	private String users;
 	
 	private String data;
+	
+	private int squares;
 	
 	@Id 
 	private long id;
@@ -19,11 +20,11 @@ public class Archive {
 		
 	}
 	
-	public Archive(long id, String image, String users, String data) {
+	public Archive(long id, String image, String data, int squares) {
 		this.image = image;
-		this.users = users;
 		this.id = id;
 		this.data = data;
+		this.squares = squares;
 	}
 	
 	public String getImage() {
@@ -32,14 +33,6 @@ public class Archive {
 
 	public void setImage(String image) {
 		this.image = image;
-	}
-
-	public String getUsers() {
-		return users;
-	}
-
-	public void setUsers(String users) {
-		this.users = users;
 	}
 
 	public long getId() {
@@ -58,8 +51,21 @@ public class Archive {
 		this.data = data;
 	}
 
+	public int getSquares() {
+		return squares;
+	}
+
+	public void setSquares(int squares) {
+		this.squares = squares;
+	}
+
 	@Override
 	public String toString() {
-		return "Archive [id=" + id + ", image=" + image + ", users=" + users + ", data=" + data + "]";
+		return "Archive [image=" + image + ", data=" + data + ", squares=" + squares + ", id=" + id
+				+ "]";
 	}
+	
+	
+	
+	
 }

@@ -1,53 +1,18 @@
-
-
 const blueSquare = document.getElementById("blueSquare");
 const bank = document.getElementById("bank");
 
 /* recieve original bankList from server */
 
-const bankList = ["blue", "yellow", "orange"];
-const usedList = ["grey","grey","grey","grey","grey","grey","grey","grey","grey","grey"];
+const bankList = ["https://preview.redd.it/os361x7rfy151.png?auto=webp&s=3d3dc9584c9b9c1d59eef3a336125032812992b8", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Crystal_128_babelfish.svg/768px-Crystal_128_babelfish.svg.png", "https://pbs.twimg.com/media/D69dJueXkAAgIsZ.png"];
+const usedList = ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png","https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png"];
 
 let selected = null;
 let server_occupied_list = [0,2,0,0,2,2,0,0,0]
 
 /*0 = unoccupied, 1 =occupied by user, 2 = occupied by someone else*/
-function recieveFromServer() {
-  /* recieve used list, set to server_occupied */
-}
 
-function sendToServer() {
-  let newList = [];
-  for (const item of usedList) {
-    if (item === "grey") {
-      newList.push(0);
-
-    } else {
-      newList.push(1);
-    }    
-  console.log("sending");
-  fetch('10.0.0.49:8080/sendData', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: "hello"
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  
-  /* send newList to server */
-  }
-}
-
-
-function updateImages(obj, number) {
-  obj.style.backgroundColor = usedList[number];
+function updateImages(obj, im, number) {
+  obj.style.backgroundColor = "gray";
   if (server_occupied_list[number] === 2) {
     obj.style.backgroundColor = 'red'
   }
@@ -60,7 +25,7 @@ function updateImages(obj, number) {
   obj.addEventListener("click", () => {
     if (selected && server_occupied_list[number] !== 2) {
       if (server_occupied_list[number] === 0) {
-        obj.style.backgroundColor = selected;
+        im.src = selected;
         server_occupied_list[number] = 1;
         usedList[number] = selected;
         let index = bankList.indexOf(selected);
@@ -70,7 +35,7 @@ function updateImages(obj, number) {
         usedList[number] = selected;
       } else  if (server_occupied_list[number] === 1){
         const temp = usedList[number];
-        obj.style.backgroundColor = selected;
+        im.src = selected;
         let index = bankList.indexOf(selected);
         if (index !== -1) {
           bankList.splice(index, 1); 
@@ -89,14 +54,13 @@ function updateImages(obj, number) {
     } else {
       if (server_occupied_list[number] === 1) {
         const temp = usedList[number]
-        obj.style.backgroundColor = "grey";
+        im.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
         server_occupied_list[number] = 0;
-        usedList[number] = "grey";
+        usedList[number] = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
         bankList.push(temp);
         updateColumns();
       }
     }
-    sendToServer();
   });
   obj.addEventListener("mouseleave", () => {
     if (server_occupied_list[number] === 0) {
@@ -132,7 +96,13 @@ function updateGridDimensions() {
       const uniqueId = "gridItem2_" + i; 
       gridItem2.id = uniqueId;
       gridItem2.classList.add("grid-item2");
-      updateImages(gridItem2,i);
+      const img = document.createElement("img");
+      img.classList.add("image");
+      img.id = "image_" + i; // Create an ID for the img element based on i
+      img.src = usedList[i]; // Set an initial empty source link
+      
+      gridItem2.appendChild(img); 
+      updateImages(gridItem2, img, i);
       blueSquare.appendChild(gridItem2);
       
     }
@@ -141,7 +111,7 @@ function updateGridDimensions() {
   
 
 window.addEventListener('resize', updateGridDimensions);
-window.addEventListener('click', sendToServer);
+
 // add event listener for recieving server info, update grid dimensions
 
 updateGridDimensions();
