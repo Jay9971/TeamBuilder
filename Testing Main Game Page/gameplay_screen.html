@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VTBuilder</title>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gameplay_screen.css">
+<script src="server_functions.js" defer></script>
+<script src="foreground.js" defer></script>
+<script src="game_grid.js" defer></script>
+<script src="adaptive_columns.js" defer></script>
+<script src="image_bank.js" defer></script>
+<script src="adaptive_background.js" defer></script>
+<script src="player_interactions.js" defer></script>
+</head>
+<body class="page-loaded">
+
+  <!--
+  <div class="logo-container">
+    <img class="foreground-img" id="logo" src="Screen_Shot_2023-08-22_at_6.17.50_PM-removebg-preview (1).png">
+  </div>
+
+  <div class="overlay2">
+    
+  </div>
+
+  <div class="grid-container2" id="gridContainer2"></div>
+  -->
+  
+  <div class="underlying-content">
+
+    <div class="grid-container" id="grid-container"></div>
+    <div class="overlay"></div>
+
+    <div class ="game-container">
+      
+      <div class="logo">
+        <img src="Screen_Shot_2023-08-22_at_6.17.50_PM-removebg-preview (1).png" alt="Logo">
+      </div>
+      
+      <div class="container">
+
+        <div class="column" id="column-one">
+
+          <div class="left-square" id="left-square">
+
+            <div class ='player-interactions'>
+
+              <div class="voice-column" id="voice">
+                <button id="micButton" class="mic-button">
+                  <img src="3800770.png" alt="Mic" class="mic-icon" id="micIcon">
+                  <div class="muted-overlay">
+                    <div class="cross-line"></div>
+                  </div>
+                </button> 
+              </div>
+
+              <div class="player-column" id="players">
+                <div id="player-box">
+                  <div class="player-row" id="player-row">
+                    <div id="player-title">PLAYERS</div>
+                  </div>
+                  <div class="listbox" id="listbox"></div>
+                </div>
+              </div>
+
+            </div>
+    
+            <div class="bank-container" id="bank-container">
+    
+              <div class="bank-row" id="bank-row">
+                <div id="title-2">IMAGE BANK</div>
+              </div>
+              
+              <div class="bank-row">
+                <div class="bank" id="bank"></div>
+              </div>
+    
+              <div class="bank-row" id="button-row">
+                <div class="interact-column">
+                  <button id="startButton" onclick=clearGrid() class="control-button">CLEAR GRID</button>
+                </div>
+                <div class="interact-column">
+                  <button id="closeButton" class="control-button">LEAVE LOBBY</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+  
+        <div class="column" id="column-two">
+          <div class="game-square" id="gameSquare"></div>
+        </div>
+  
+      </div>
+
+    </div>
+
+  </div>
+  
+</body>
+</html>
