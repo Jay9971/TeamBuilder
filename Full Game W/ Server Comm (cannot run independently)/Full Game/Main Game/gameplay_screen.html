@@ -6,17 +6,17 @@
 <title>VTBuilder</title>
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="gameplay_screen.css">
-<script src="server_functions.js" defer></script>
-<script src="foreground.js" defer></script>
-<script src="game_grid.js" defer></script>
-<script src="adaptive_columns.js" defer></script>
-<script src="image_bank.js" defer></script>
-<script src="adaptive_background.js" defer></script>
-<script src="player_interactions.js" defer></script>
+<script src="script.js/server_functions.js" defer></script>
+<script src="script.js/foreground.js" defer></script>
+<script src="script.js/game_grid.js" defer></script>
+<script src="script.js/adaptive_columns.js" defer></script>
+<script src="script.js/image_bank.js" defer></script>
+<script src="script.js/adaptive_background.js" defer></script>
+<script src="script.js/player_interactions.js" defer></script>
 </head>
 <body class="page-loaded">
 
-  <!--
+  <!-- This is the animation overlay. Disabled for now cuz i need to tweak it to look good and its not a priority
   <div class="logo-container">
     <img class="foreground-img" id="logo" src="Screen_Shot_2023-08-22_at_6.17.50_PM-removebg-preview (1).png">
   </div>
@@ -82,7 +82,7 @@
                   <button id="startButton" onclick=clearGrid() class="control-button">CLEAR GRID</button>
                 </div>
                 <div class="interact-column">
-                  <button id="closeButton" class="control-button">LEAVE LOBBY</button>
+                  <button id="closeButton" onclick=leaveGame() class="control-button">LEAVE LOBBY</button>
                 </div>
               </div>
             </div>
