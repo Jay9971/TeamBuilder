@@ -185,7 +185,7 @@ async function getGameState() {
 //function specifically for when the leave game button is clicked
 async function leaveGame() {
   try {
-      const response = await post("leave game", {
+      await post("leave game", {
         ID: userID,
       }, 'application/json');
         
