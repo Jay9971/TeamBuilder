@@ -72,7 +72,7 @@ function updateImages(obj, im, number) {
   //all occupied squares are set to red with no event listeners
   if (server_occupied_list[number] === 2) {
     obj.style.background = 'rgb(255,100,100)'
-    im.src='a07a2e21483149f8e33f57faed35eefc.png'
+    im.src='main/a07a2e21483149f8e33f57faed35eefc.png'
   }
 
   // could be rewritten a little more efficiently so there is no event listener for every single square. put if conditions outside event listeners
@@ -127,9 +127,9 @@ function updateImages(obj, im, number) {
       //if nothing is selected and your own img is selected, remove and put it in bank
       if (server_occupied_list[number] === 1) {
         const temp = usedList[number]
-        im.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
+        im.src = transp_link;
         server_occupied_list[number] = 0;
-        usedList[number] = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
+        usedList[number] = transp_link;
         bankList.push(temp);
         createBank();
         sendMySquares();
