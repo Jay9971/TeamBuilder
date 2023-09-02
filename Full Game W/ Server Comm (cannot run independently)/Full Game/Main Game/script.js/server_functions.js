@@ -37,7 +37,7 @@ const userID = window.location.search.substring(8);
 const originalList = await getStarterData();
 
 //full image link
-const img_url = originalList[1];
+let imageUrl;
 
 //number of squares on the grid (needed to get pieces of the image and make grid)
 const total_squares = parseInt(originalList[0]); 
@@ -99,10 +99,21 @@ function get(path, lobby_code, method='get') {
 //function specifically for the original data
 async function getStarterData() {
     try {
-        const response = await post("path", {
+        const response = await post("/get-game-initial-data", {
           userid: userID
         }, 'application/json');
-        return [response.numSquares, response.link, response.assignedSquares];
+        let temp = [response.numSquares, response.imageUrl, response.assignedSquares];
+	const imageResponse = await fetch(temp[1]);
+
+	if (!imageResponse.ok) {
+	    throw new Error(`Failed to fetch image (${imageResponse.status} ${imageResponse.statusText})`);
+	}
+
+	const imageBlob = await imageResponse.blob();
+
+	// Create a custom URL for the Blob
+	imageUrl = URL.createObjectURL(imageBlob);
+	    
     } catch (error) {
         console.error(error);
         // You can re-throw the error if needed
@@ -207,7 +218,7 @@ async function sendMySquares() {
     }
   }
   try {
-    await post("listener for square data", {
+    await post("/send-square-locations-data", {
       userid: userID,
       occupiedSquares : occupiedString
     }, 'application/json');
