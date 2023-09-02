@@ -25,6 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
     saveButton.addEventListener('click', () => {
         const nicknameInput = document.getElementById('nickname');
         nickname = nicknameInput.value;
+        if (nickname.length > 8) {
+          nickname = null;
+          console.log("retry with a shorter name");
+        }
+      if (nickname.length < 8) {
+        const diff = 8-nickname.length;
+        for (let i=0;i<diff;i++) {
+          nickname += " ";
+        }
     });
 
     joinLobbyButton.addEventListener('click', () => {
