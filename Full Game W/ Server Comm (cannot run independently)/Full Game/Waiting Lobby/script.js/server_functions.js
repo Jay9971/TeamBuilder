@@ -76,12 +76,23 @@ async function startGame() {
           userid: userID,
         }, 'application/json');
 
-        playerList = (response.userList).slice(0,(response.userList).length-3);
+	const path = response.url;
+	const status = response.isStarted;
+	const player = response.userList;
+	let playerList = [];
+	    
+	for (let i=0;i<(player.length)/8;i++) {
+		const sub = player.substring(8*i,8*i+8);
+		playerList.push(sub);
+	}
+	    
+	console.log(playerList);
+	    
         updatePlayers();
 
         //might need to add a load event listener, or define function earlier
-        if (response.userList[(response.userList).length-2] === "1") {
-            get(response.userList[(response.userList).length-1),userID);
+        if (status === "1") {
+            get(path,userID);
         }  
 
     } catch (error) {
