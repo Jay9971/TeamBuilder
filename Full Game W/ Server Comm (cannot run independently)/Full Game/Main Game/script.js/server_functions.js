@@ -5,7 +5,7 @@
 //
 
 /* internet link for a transparent overlay, can be downloaded file idk */
-const transp_link = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
+const transp_link = "main/https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
 
 /* tempBank: list for number coordinates of the images assigned to this user. The original image is split into a grid of squares.
 each side length is equal to the sqrt of the total number of squares. the squares are designated one number, 0 through total_squares-1, 
