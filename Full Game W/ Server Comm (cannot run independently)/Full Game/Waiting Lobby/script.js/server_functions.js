@@ -68,16 +68,16 @@ async function sendStartGame() {
 //function called repeatedly for start game status and player list
 async function startGame() {
     try {
-        await post("/game-status", {
+        await post("/get-player-list-in-lobby", {
           userid: userID,
         }, 'application/json');
 
-        playerList = response.players;
+        playerList = (response.userList).slice(0,(response.userList).length-2);
         updatePlayers();
 
         //might need to add a load event listener, or define function earlier
-        if (response.startGameStatus === "1") {
-            get(response.mainGamePath,userID);
+        if (response.userList[(response.userList).length-1] === "1") {
+            get("/game",userID);
         }  
 
     } catch (error) {
