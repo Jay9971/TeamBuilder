@@ -1,5 +1,5 @@
 /* internet link for a transparent overlay, can be downloaded file idk */
-const transp_link = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
+const transp_link = "post/https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
 
 /* creates HTML image element to be used later in order to create smaller images*/
 const refImage = document.createElement("img");
