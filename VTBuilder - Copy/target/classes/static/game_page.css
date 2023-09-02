@@ -1,0 +1,131 @@
+body {
+  margin: 0;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+.grid-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-gap: 0px;
+  justify-content: center; /* Center the grid horizontally */
+  align-content: center; /* Center the grid vertically */
+  overflow: hidden; /* Prevent overflow of squares */
+  z-index: -1;
+}
+.grid-item {
+  width: 100%;
+  height: 100%;
+  background-color: beige; /* Default color */
+}
+
+.overall {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+  
+}
+.logo {
+  
+  height:20vh;
+  width: 100vw;
+  /* Logo styling goes here */
+}
+.logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+  margin: 0 auto; /* Center the image horizontally */
+}
+.container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  
+  
+}
+.column {
+  width:50vw;
+  height:100vh;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+#column-one {
+  flex-direction: column;
+  
+  
+}
+.stuff {
+  width: 100%;
+  height: 50%;
+ 
+}
+.bank {
+  width: 50%;
+  height:80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  }
+  
+.color-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  
+}
+  
+.square {
+  width: 80px;
+  height: 80px;
+}
+
+
+/* make the square shrink or something bruh this is unbelivable. might have to use bootstrap or something to make a grid. it only resizes to fit the width, but lets height overflow for some reason.*/
+.blue-square {
+  height: 55%;
+  width: 55%;
+  max-height: 55%;
+  max-width: 55%;
+  position: relative;
+  display: grid;
+  grid-gap: 2px;
+  overflow: hidden; /* Prevent overflow of squares */
+
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  
+  background-color: grey; /* Default color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: grey; /* Default color */
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  
+  
+}

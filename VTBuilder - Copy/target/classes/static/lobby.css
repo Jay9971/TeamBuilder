@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 80vh; /* Make the container fill the screen height */
+  width: 100vw;
+  flex-direction: row;
+}
+
+.column {
+  /*
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  */
+  width: 50vw; /* Make the columns fill half of the screen width */
+  height: 100vh; /* Make the columns fill the screen height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#column-one {
+  background-color: lightblue;
+}
+
+#column-two {
+  background-color: lightgreen;
+}
+
+.row {
+  height:50%;
+  width:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+#player-box {
+  height: 90%;
+  width: 90%;
+  background-color: rgb(78, 71, 71,0.3);
+}
+
+#title {
+  height:10%;
+  width:100%;
+  background-color: black;
+  text-align: center;
+  color: white;
+}
+.circle-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid black;
+  cursor: pointer;
+}
+.circle-button.red {
+  background-color: red;
+}
+
+.control-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.control-button.clicked {
+  background-color: #dc3545;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+.blue-square {
+  background-color:#007bff;
+  width:70%;
+  height:70%;
+  color:white;
+}
+
+.logo {
+    
+  height:20vh;
+  /* Logo styling goes here */
+}
+.logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+  margin: 0 auto; /* Center the image horizontally */
+}
