@@ -36,7 +36,7 @@ const userID = window.location.search.substring(8);
 
 // first_request(original server data)
 //gets a list from the server
-const originalList = await getStarterData();
+const originalList = getStarterData();
 
 //full image link
 const img_url = originalList[1];
