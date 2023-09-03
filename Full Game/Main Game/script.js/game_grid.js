@@ -1,19 +1,4 @@
-/* creates HTML image element to be used later in order to create smaller images*/
-const refImage = document.createElement("img");
-refImage.src = img_url;
 
-/* the container in which the gameplay grid resides*/
-const gameSquare = document.getElementById("gameSquare");
-
-/* bank refers to image bank, like a wordbank on a worksheet but for images lol */
-const bank = document.getElementById("bank");
-
-/* constants for number of rows/columns and the gap between gridded images */
-const rows = Math.sqrt(total_squares);
-const gapSize = 1; // Adjust the gap between squares as needed
-
-// link to the currently selected image
-let selected = null;
 
 /* populates bankList with links to smaller images */
 function populateBankList() {
