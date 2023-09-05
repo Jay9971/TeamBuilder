@@ -1,3 +1,4 @@
+//only called ONCE!
 /* populates bankList with links to smaller images */
 function populateBankList() {
 
@@ -45,90 +46,103 @@ function populateBankList() {
   }
 }
 
-// updates all the images in the game grid. adds new event listeners to each item in the grid. hovering over produces white, occupied grids are red, and grid spots with previously placed images are the same
-// obj is the square grid object, im is the image object on top, number is the single coordinate number of the image/grid object
-function updateImages(obj, im, number) {
-  // sets all backgrounds to gray by default with a transparent image
-  obj.style.backgroundColor = "transparent";
-  im.src = usedList[number];
-
-  //all occupied squares are set to red with no event listeners
-  if (server_occupied_list[number] === 2) {
-    obj.style.background = 'rgb(255,100,100)';
-    im.src=stripe_link;
-    usedList[number] = stripe_link;
-  }
-
-  // could be rewritten a little more efficiently so there is no event listener for every single square. put if conditions outside event listeners
-
-  // make white when hovering over unoccupied square
-  obj.addEventListener("mouseenter", () => {
-    if (server_occupied_list[number] === 0) {
+//these next few functions are only used in resizing!!!
+//hovering effect
+function gridEnterListener(obj,number) {
+  if (server_occupied_list[number] === 0) {
       obj.style.backgroundColor = "white";
-    }
-  });
-
-  //when clicked
-  obj.addEventListener("click", () => {
-
-    // if something is selected and its not occupied by someone else, place selected image, remove it from bank. if theres already an image, replace their bank and grid positions
-    if (selected && server_occupied_list[number] !== 2) {
-      if (server_occupied_list[number] === 0) {
-        im.src = selected;
-        server_occupied_list[number] = 1;
-        usedList[number] = selected;
-        let index = bankList.indexOf(selected);
-        if (index !== -1) {
-          bankList.splice(index, 1); 
-        }
-        usedList[number] = selected;
-      } else  if (server_occupied_list[number] === 1){
-        const temp = usedList[number];
-        im.src = selected;
-        let index = bankList.indexOf(selected);
-        if (index !== -1) {
-          bankList.splice(index, 1); 
-        }
-        bankList.push(temp);
-        createBank();
-        usedList[number] = selected;
-      }
-      
-
-      // removes placed image from bank
-      const temp = document.getElementById(selected);
-      if (temp) {
-        temp.remove();
-      }
-      selected = null;
-      
-      //send server occupied list to server (may need two variables)
-      // post();
-
-    } else {
-
-      //if nothing is selected and your own img is selected, remove and put it in bank
-      if (server_occupied_list[number] === 1) {
-        const temp = usedList[number]
-        im.src = transp_link;
-        server_occupied_list[number] = 0;
-        usedList[number] = transp_link;
-        bankList.push(temp);
-        createBank();
-      }
-    }
-    sendMySquares();
-  });
-
-  //remove white color when mouse is not hovering
-  obj.addEventListener("mouseleave", () => {
-    if (server_occupied_list[number] === 0) {
-      obj.style.backgroundColor = "transparent";
-    }
-  });  
+  }
 }
 
-function updateGame() {
+function gridExitListener(obj,number) {
+  if (server_occupied_list[number] === 0) {
+      obj.style.backgroundColor = "transparent";
+  }
+}
+
+//changes bankList, usedList, and server_occupied_list when a square is clicked
+function gridClickListener(number) {
+
+  if (server_occupied_list[number] !== 2) {
+      if (selected) {
+          if (server_occupied_list[number] === 0) {
+
+              //changes the image at that spot to the selected image, updates usedList with img link, server_occupied_list with 1
+              usedList[number] = selected;
+              server_occupied_list[number] = 1;
+
+              //removes selected link from bankList
+              let index = bankList.indexOf(selected);
+              if (index !== -1) {
+                  bankList.splice(index, 1); 
+              }
+
+          }
+
+          if (server_occupied_list[number] === 1) {
+              //adds replaced square to banklist
+              bankList.push(usedList[number]);
+
+              //removes placed square from bankList
+              let index = bankList.indexOf(selected);
+              if (index !== -1) {
+                  bankList.splice(index, 1); 
+              }
+
+              //updates grid
+              usedList[number] = selected;
+  
+          }
+          updateAllImages();
+
+      } else {
+          //adds removed square to banklist
+          bankList.push(usedList[number]);
+
+          server_occupied_list[number] = 0;
+          usedList[number] = transp_link;
+      }
+  }
+   
+}
+
+function addListenersForGrid(obj) {
+obj.addEventListener('mouseenter', gridEnterListener);
+obj.addEventListener('mouseleave', gridExitListener);
+obj.addEventListener('click', gridClickListener);
+}
+
+//updates the font size for the buttons and the player list title. need to add resizing for the listbox content text.
+//this needs to be fixed later, idrc at this point.
+function updateFontSize() {
+  //button font code
+  const titleContainer = document.getElementById('bank-row');
+  const title = document.getElementById('title-2');
+
+  const elements = document.querySelectorAll('.control-button');
+
+  elements.forEach(element => {
+      let tempWidth = element.offsetWidth;
+      let tempFont = tempWidth * 0.1;
+      element.style.fontSize = tempFont + 'px';
+
+  });
+
+  //image bank title resizing
+  const containerWidth = titleContainer.offsetWidth;
+  const fontSize = containerWidth * 0.05; // Adjust the multiplier as needed
+  title.style.fontSize = fontSize + 'px';
+
+  //playerlist title resizing
+  const row = document.getElementById('player-row');
+  const text = document.getElementById('player-title');
+  const rowWidth = row.offsetWidth;
+  const font = rowWidth * 0.105; // Adjust the multiplier as needed
+  text.style.fontSize = font + 'px';
+}
+
+//ONLY WHEN SOMETHING IS RESIZED
+function updateGridSize() {
 
     //find width of the current game grid and calculate each square size
     const gameWidth = gameSquare.offsetWidth;
@@ -149,14 +163,41 @@ function updateGame() {
       const gridItem2 = document.createElement("div");
       gridItem2.classList.add("grid-item2");
       gridItem2.id = "gridItem2_" + i;
+
       const img = document.createElement("img");
       img.classList.add("image");
-      img.src = usedList[i]; // Set an initial empty source link
+      img.src = usedList[i]; 
+
       gridItem2.appendChild(img); 
-      //add all the event listeners
-      updateImages(gridItem2, img, i);
       gameSquare.appendChild(gridItem2);
+
+      addListenersForGrid(gridItem2);
     }
     updateFontSize();
+}
+//above functions only used in resizing!!!  
+
+//called every interval
+//just checks server and used list and updates all grid images. call every ms
+function updateGridImages() {
+
+  //update game grid images
+  for (i=0;i<server_occupied_list.length;i++) {
+
+      //gets HTML objects
+      const id = "gridItem2_" + i;
+      const object = document.getElementById(id);
+      const image = object.firstChild;
+
+      //updates backgrounds for those needed
+      if (server_occupied_list[i] === 0) {
+          object.style.backgroundColor = "transparent";
+      } else if (server_occupied_list[i] === 2) {
+          object.style.backgroundColor = "red";
+      }
+
+      //plots all images
+      image.src = usedList[i];
   }
-  
+
+}
