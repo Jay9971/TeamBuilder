@@ -22,9 +22,11 @@ let bankList = [];
 /* list of the image url being used at every square on the grid. empty squares, including ones occupied by other players, have a
 transparent image. initialized with all transparent images*/
 let usedList=  [];
-
+let server_occupied_list = [];
 /*0 = unoccupied, 1 =occupied by user, 2 = occupied by someone else*/
 //list of squares currently occupied by a player
+
+//live occupied list
 let occupied_id_list = "";
 
 //list of players
@@ -46,7 +48,7 @@ let selected = null;
 
 // first_request(original server data)
 //gets a list from the server
-let originalList;
+
 
 getStarterData();
 
@@ -106,33 +108,23 @@ function get_l(path, method='get') {
 
 
 //function specifically for the original data
+//function specifically for the original data
 async function getStarterData() {
   try {
       
       const response = await post("/get-game-initial-data", {
         userid: userID
       }, 'application/json');
-      let temp = [response.numSquares, response.imageUrl, response.assignedSquares];
-	    temp[1] += "?userid=" + userID;
       
-      //let temp = ["","",""];
-	    //temp[1] = "main/wallpaper2you_201539.jpeg"
-      //temp[0] = "16";
-      //temp[2] = "04080912";
-
-      originalList = temp;
-      server_occupied_list = [];
-      img_url = originalList[1];
-  
       //number of squares on the grid (needed to get pieces of the image and make grid)
-      total_squares = parseInt(originalList[0]); 
+      total_squares = parseInt(response.numSquares); 
       for (let i=0; i<total_squares;i++) {
         usedList.push(transp_link);
         server_occupied_list.push(0);
       }
 
       //which pieces are assigned to this user specifically
-      numbersString = originalList[2];
+      numbersString = response.assignedSquares;
       for (let i = 0; i < numbersString.length; i += 2) {
         const substring = numbersString.substring(i, i + 2);
         const intValue = parseInt(substring);
@@ -140,8 +132,10 @@ async function getStarterData() {
       }
 
       /* creates HTML image element to be used later in order to create smaller images*/
+      img_url = response.imageUrl+"?userid=" + userID;
       refImage = document.createElement("img");
       refImage.src = img_url;
+
       refImage.addEventListener("load", callFunctions);
 
                 
@@ -184,6 +178,7 @@ async function sendFinalData() {
 
 //function specifically for the grid status data
 //add a function that says game over and waits a few seconds before actually switching screens (stage 2, dw rn)
+//add a function that says game over and waits a few seconds before actually switching screens (stage 2, dw rn)
 async function getGameState() {
   try {
       const response = await post("/get-square-locations-data", {
@@ -196,29 +191,24 @@ async function getGameState() {
       } 
 	  
       server_occupied_list = [];
-      occStr = response.occupiedList;
-      occupied_id_list = occStr;
-      console.log("Recieving occ: " + occStr);
+      occupied_id_list = response.occupiedList;
       
-      for (let i=0; i<occStr.length;i+=2) {
-        if (occStr.substring(i,i+2) === userID) {
+      //updates server occupied list and used list with any changes made by other players
+      for (let i=0; i<occupied_id_list.length;i+=2) {
+        if (occupied_id_list.substring(i,i+2) === userID) {
           server_occupied_list.push(1);
-        } else if (occStr.substring(i,i+2) === "00") {
+        } else if (occupied_id_list.substring(i,i+2) === "00") {
           server_occupied_list.push(0);
+          usedList[i] = transp_link;
         } else {
           server_occupied_list.push(2);
+          usedList[i] = stripe_link;
         }
       }
+      //this uopdates all images every interval, which accounts for user and server changes
+      updateGridImages();
       
-      for (i=0;i<server_occupied_list.length;i++) {
-        const id = "gridItem2_" + i;
-        const object = document.getElementById(id);
-        const image = object.firstChild;
-        updateImages(object, image, i);
-        //may have to define function earlier
-      }
-      
-      //player list
+      //player list. needs to be fixed later
       const player = response.userList;
       let playerList = [];
       for (let i=0;i<(player.length)/8;i++) {
@@ -251,32 +241,18 @@ async function leaveGame() {
 
 //function specifically for sending my squares to the server when i make a placement
 async function sendMySquares() {
-  const tempOcc = [];
+
   let occupiedString = "";
 
-  for (let i=0;i<occupied_id_list.length;i+=2) {
-    let tempStr = occupied_id_list.substring(i,i+2);
-    tempStr = parseInt(tempStr);
-    tempOcc.push(tempStr);
-  }
 
-  for (let i = 0; i < server_occupied_list.length; i ++) {
-    if (server_occupied_list[i] === 0) {
-      tempOcc[i] = 0;
-    } else if (server_occupied_list[i] == 1) {
-      tempOcc[i] = parseInt(userID);
-    }
-  }
-
-  for (let i=0;i<tempOcc.length;i++) {
-    if (tempOcc[i] > 9) {
-      occupiedString += tempOcc[i];
+  for (let i=0;i<server_occupied_list.length;i++) {
+    if (server_occupied_list[i] > 9) {
+      occupiedString += server_occupied_list[i];
     } else {
-      occupiedString += "0" + tempOcc[i]; 
-    }
-    
+      occupiedString += "0" + server_occupied_list[i]; 
+    }  
   }
-  console.log("Occupied string: " + occupiedString);
+
   try {
     await post("/send-square-locations-data", {
       userid: userID,
@@ -303,32 +279,21 @@ function callFunctions() {
 
   // populate bankList only after the image has loaded, or else the image will just be black */
   populateBankList();
-  createBank();
-  updateGame();
-  
-         console.log("okkkkkkkk");
+  updateBank();
+  updateGridSize();
 
   //resize the grid and remake event listeners with a screen resize
-  window.addEventListener('resize', updateGame);
+  window.addEventListener('resize', updateGridSize);
   
-  // only creates bank after original image loads
-
-  //creates grid for first time (just put this here so it only happens after the image loads. could be called in game_grid honestly)
-
-  // Call the updateFontSize function on window resize
-
   //changes state of mic button based on whether or not it is toggled. Add voice chat stuff here later
   const micButton = document.getElementById('micButton');
   let isMuted = false; // You can change this based on your actual state
 
   micButton.addEventListener('click', () => {
-  isMuted = !isMuted;
-  micButton.classList.toggle('muted');
+    isMuted = !isMuted;
+    micButton.classList.toggle('muted');
   });
   
   const interval = 1000; // 1000 milliseconds = 1 second
   setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
-	
-  console.log("second oneeeee");
-  // You can perform your mic mute/unmute functionality here
 }
