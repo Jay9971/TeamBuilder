@@ -294,6 +294,6 @@ function callFunctions() {
     micButton.classList.toggle('muted');
   });
   
-  const interval = 1000; // 1000 milliseconds = 1 second
+  const interval = 1; // 1000 milliseconds = 1 second
   setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
 }
