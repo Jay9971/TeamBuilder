@@ -143,8 +143,6 @@ async function getStarterData() {
       refImage = document.createElement("img");
       refImage.src = img_url;
       refImage.addEventListener("load", callFunctions);
-      const interval = 1; // 1000 milliseconds = 1 second
-      setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
 
                 
   } catch (error) {
@@ -196,10 +194,11 @@ async function getGameState() {
       if (response.gameStatus === "2") {
         await sendFinalData();
       } 
-
+	  
       server_occupied_list = [];
       occStr = response.occupiedList;
       occupied_id_list = occStr;
+      console.log("Recieving occ: " + occStr);
       
       for (let i=0; i<occStr.length;i+=2) {
         if (occStr.substring(i,i+2) === userID) {
@@ -277,6 +276,7 @@ async function sendMySquares() {
     }
     
   }
+  console.log("Occupied string: " + occupiedString);
   try {
     await post("/send-square-locations-data", {
       userid: userID,
@@ -305,6 +305,8 @@ function callFunctions() {
   populateBankList();
   createBank();
   updateGame();
+  
+         console.log("okkkkkkkk");
 
   //resize the grid and remake event listeners with a screen resize
   window.addEventListener('resize', updateGame);
@@ -323,6 +325,10 @@ function callFunctions() {
   isMuted = !isMuted;
   micButton.classList.toggle('muted');
   });
-
+  
+  const interval = 1000; // 1000 milliseconds = 1 second
+  setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
+	
+  console.log("second oneeeee");
   // You can perform your mic mute/unmute functionality here
 }

@@ -56,7 +56,7 @@ function updateImages(obj, im, number) {
   if (server_occupied_list[number] === 2) {
     obj.style.background = 'rgb(255,100,100)';
     im.src=stripe_link;
-    used_list[number] = stripe_link;
+    usedList[number] = stripe_link;
   }
 
   // could be rewritten a little more efficiently so there is no event listener for every single square. put if conditions outside event listeners
@@ -82,7 +82,6 @@ function updateImages(obj, im, number) {
           bankList.splice(index, 1); 
         }
         usedList[number] = selected;
-        sendMySquares();
       } else  if (server_occupied_list[number] === 1){
         const temp = usedList[number];
         im.src = selected;
@@ -93,8 +92,8 @@ function updateImages(obj, im, number) {
         bankList.push(temp);
         createBank();
         usedList[number] = selected;
-        sendMySquares();
       }
+      
 
       // removes placed image from bank
       const temp = document.getElementById(selected);
@@ -116,9 +115,9 @@ function updateImages(obj, im, number) {
         usedList[number] = transp_link;
         bankList.push(temp);
         createBank();
-        sendMySquares();
       }
     }
+    sendMySquares();
   });
 
   //remove white color when mouse is not hovering
