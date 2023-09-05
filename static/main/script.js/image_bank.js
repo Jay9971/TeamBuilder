@@ -1,4 +1,5 @@
 //creates a column in which a square resides, in which an  image resides (redundant, can be reduced), with event listeners for when it is selected
+//only called when bank HAS to be updated!
 function createBankItem(url) {
   const column = document.createElement("div");
   column.classList.add("bank-column");
@@ -35,38 +36,13 @@ function createBankItem(url) {
 }
 
 //creates bank item for every item in banklist, clears all previous items
-function createBank() {
+//ONLY CALLED WHEN BANK NEEDS AN UPDATE
+function updateBank() {
   bank.innerHTML = ""; // Clear existing columns
   for (const link of bankList) {
-    createBankItem(link);
+      createBankItem(link);
   }
 }
 
-//updates the font size for the buttons and the player list title. need to add resizing for the listbox content text.
-function updateFontSize() {
-  //button font code
-  const titleContainer = document.getElementById('bank-row');
-  const title = document.getElementById('title-2');
-  
-  const elements = document.querySelectorAll('.control-button');
-  
-  elements.forEach(element => {
-    let tempWidth = element.offsetWidth;
-    let tempFont = tempWidth * 0.1;
-    element.style.fontSize = tempFont + 'px';
-  
-  });
 
-  //image bank title resizing
-  const containerWidth = titleContainer.offsetWidth;
-  const fontSize = containerWidth * 0.05; // Adjust the multiplier as needed
-  title.style.fontSize = fontSize + 'px';
-
-  //playerlist title resizing
-  const row = document.getElementById('player-row');
-  const text = document.getElementById('player-title');
-  const rowWidth = row.offsetWidth;
-  const font = rowWidth * 0.105; // Adjust the multiplier as needed
-  text.style.fontSize = font + 'px';
-}
 
