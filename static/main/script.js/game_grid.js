@@ -96,7 +96,7 @@ function populateBankList() {
             }
           console.log("update: " + usedList);
           selected = null;
-        } else {
+        } else if (server_occupied_list[number] == 1){
             //adds removed square to banklist
             bankList.push(usedList[number]);
   
