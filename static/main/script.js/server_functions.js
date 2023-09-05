@@ -203,9 +203,10 @@ async function getGameState() {
           new_server_occupied_list.push(2);
         }
       }
-
+	
       if (new_server_occupied_list !== server_occupied_list) {
-        for (let i=0;i<new_server_occupied_list.length;i++) {
+        
+	for (let i=0;i<new_server_occupied_list.length;i++) {
           if (server_occupied_list[i] !== 1) {
             if (new_server_occupied_list[i] === 0) {
               usedList[i] = transp_link;
@@ -215,10 +216,13 @@ async function getGameState() {
             server_occupied_list[i] = new_server_occupied_list[i];
           }
         }
+	
+
         updateGridImages();
       }
       //this uopdates all images every interval, which accounts for user and server changes
-      console.log("occupied : " + server_occupied_list);
+      console.log("my occupied : " + server_occupied_list);
+      console.log("server occupied : " + new_server_occupied_list);
       console.log("used list: " + usedList);
 
 
