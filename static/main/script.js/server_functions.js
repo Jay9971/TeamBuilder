@@ -195,17 +195,19 @@ async function getGameState() {
       
       //updates server occupied list and used list with any changes made by other players
       for (let i=0; i<occupied_id_list.length;i+=2) {
-        if (occupied_id_list.substring(i,i+2) === userID) {
+        if (occupied_id_list.substring(i,i+2) === userID && usedList[i/2] !== transp_link && usedList[i/2] !== stripe_link) {
           server_occupied_list.push(1);
-        } else if (occupied_id_list.substring(i,i+2) === "00") {
+        } else if (occupied_id_list.substring(i,i+2) === "00" && usedList[i/2] === transp_link) {
           server_occupied_list.push(0);
           usedList[i] = transp_link;
-        } else {
+        } else if (usedList[i/2] === stripe_link){
           server_occupied_list.push(2);
           usedList[i] = stripe_link;
         }
       }
       //this uopdates all images every interval, which accounts for user and server changes
+      console.log("occupied : " + server_occupied_list);
+      console.log("used list: " + usedList);
       updateGridImages();
       
       //player list. needs to be fixed later

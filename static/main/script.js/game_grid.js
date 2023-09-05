@@ -75,11 +75,12 @@ function gridClickListener(number) {
               let index = bankList.indexOf(selected);
               if (index !== -1) {
                   bankList.splice(index, 1); 
-              }
+              } 
+              selected = null;
 
           }
 
-          if (server_occupied_list[number] === 1) {
+          else if (server_occupied_list[number] === 1) {
               //adds replaced square to banklist
               bankList.push(usedList[number]);
 
@@ -91,10 +92,9 @@ function gridClickListener(number) {
 
               //updates grid
               usedList[number] = selected;
-  
+  			  selected = null;
           }
-          updateAllImages();
-
+		console.log("update: " + usedList);
       } else {
           //adds removed square to banklist
           bankList.push(usedList[number]);
@@ -103,13 +103,20 @@ function gridClickListener(number) {
           usedList[number] = transp_link;
       }
   }
-   
+  sendMySquares();
+  updateBank();
 }
 
-function addListenersForGrid(obj) {
-obj.addEventListener('mouseenter', gridEnterListener);
-obj.addEventListener('mouseleave', gridExitListener);
-obj.addEventListener('click', gridClickListener);
+function addListenersForGrid(obj, number) {
+obj.addEventListener('mouseenter', function() {
+	gridEnterListener(obj, number);
+});
+obj.addEventListener('mouseleave', function() {
+	gridExitListener(obj, number);
+});
+obj.addEventListener('click', function () {
+	gridClickListener(number);
+});
 }
 
 //updates the font size for the buttons and the player list title. need to add resizing for the listbox content text.
@@ -171,7 +178,7 @@ function updateGridSize() {
       gridItem2.appendChild(img); 
       gameSquare.appendChild(gridItem2);
 
-      addListenersForGrid(gridItem2);
+      addListenersForGrid(gridItem2, i);
     }
     updateFontSize();
 }
@@ -191,7 +198,9 @@ function updateGridImages() {
 
       //updates backgrounds for those needed
       if (server_occupied_list[i] === 0) {
-          object.style.backgroundColor = "transparent";
+		  if (object.style.backgroundColor !== "white") {
+			object.style.backgroundColor = "transparent";  
+		  }
       } else if (server_occupied_list[i] === 2) {
           object.style.backgroundColor = "red";
       }
