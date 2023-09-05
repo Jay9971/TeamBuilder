@@ -190,25 +190,39 @@ async function getGameState() {
         await sendFinalData();
       } 
 	  
-      server_occupied_list = [];
+      let new_server_occupied_list = [];
       occupied_id_list = response.occupiedList;
       
       //updates server occupied list and used list with any changes made by other players
       for (let i=0; i<occupied_id_list.length;i+=2) {
-        if (occupied_id_list.substring(i,i+2) === userID && usedList[i/2] !== transp_link && usedList[i/2] !== stripe_link) {
-          server_occupied_list.push(1);
-        } else if (occupied_id_list.substring(i,i+2) === "00" && usedList[i/2] === transp_link) {
-          server_occupied_list.push(0);
-          usedList[i] = transp_link;
-        } else if (usedList[i/2] === stripe_link){
-          server_occupied_list.push(2);
-          usedList[i] = stripe_link;
+        if (occupied_id_list.substring(i,i+2) === userID) {
+          new_server_occupied_list.push(1);
+        } else if (occupied_id_list.substring(i,i+2) === "00") {
+          new_server_occupied_list.push(0);
+        } else {
+          new_server_occupied_list.push(2);
         }
+      }
+
+      if (new_server_occupied_list !== server_occupied_list) {
+        for (let i=0;i<new_server_occupied_list.length;i++) {
+          if (server_occupied_list[i] !== 1) {
+            if (new_server_occupied_list[i] === 0) {
+              usedList[i] = transp_link;
+            } else if (new_server_occupied_list[i] === 2) {
+              usedList[i] = stripe_link;
+            }
+            server_occupied_list[i] = new_server_occupied_list[i];
+          }
+        }
+        updateGridImages();
       }
       //this uopdates all images every interval, which accounts for user and server changes
       console.log("occupied : " + server_occupied_list);
       console.log("used list: " + usedList);
-      updateGridImages();
+
+
+      
       
       //player list. needs to be fixed later
       const player = response.userList;
