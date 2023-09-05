@@ -263,14 +263,17 @@ async function leaveGame() {
 async function sendMySquares() {
 
   let occupiedString = "";
-
+  
+	
 
   for (let i=0;i<server_occupied_list.length;i++) {
-    if (server_occupied_list[i] > 9) {
-      occupiedString += server_occupied_list[i];
+    if (server_occupied_list[i] === 1) {
+	    occupiedString+=userID;
+    } else if (server_occupied_list[i] === 2) {
+	    occupiedString+= occupied_id_list.substring(2*i,2*i+2);
     } else {
-      occupiedString += "0" + server_occupied_list[i]; 
-    }  
+	    occupiedString+= "00";
+    }
   }
 
   try {
