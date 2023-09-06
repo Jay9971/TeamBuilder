@@ -22,15 +22,10 @@ function clearGrid() {
     const currentItem = server_occupied_list[i];
     if (currentItem === 1) {
       server_occupied_list[i] = 0;
-      const link = usedList[i];
-      const imageElement = document.querySelector(`img[src="${link}"]`);
-      imageElement.src = transp_link;
-      
-      bankList.push(link);
+      bankList.push(usedList[i]);
       usedList[i] = transp_link;
-      createBank();
-      updateGame();
     }
   }
+  updateBank();
+  sendMySquares();
 }
-

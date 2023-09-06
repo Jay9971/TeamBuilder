@@ -4,9 +4,9 @@
 //
 //
 
-/* internet link for a transparent overlay, can be downloaded file idk */
+/* internet link for a transparent overlay and a downloaded link for a striped overlay, can be downloaded file idk */
 const transp_link = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
-const stripe_link = 'a07a2e21483149f8e33f57faed35eefc.png';
+const stripe_link = 'images/stripeOverlay.png';
 
 /* tempBank: list for number coordinates of the images assigned to this user. The original image is split into a grid of squares.
 each side length is equal to the sqrt of the total number of squares. the squares are designated one number, 0 through total_squares-1, 
@@ -22,10 +22,11 @@ let bankList = [];
 /* list of the image url being used at every square on the grid. empty squares, including ones occupied by other players, have a
 transparent image. initialized with all transparent images*/
 let usedList=  [];
-
+let server_occupied_list = [];
 /*0 = unoccupied, 1 =occupied by user, 2 = occupied by someone else*/
 //list of squares currently occupied by a player
-let server_occupied_list = [];
+
+//live occupied list
 let occupied_id_list = "";
 
 //list of players
@@ -47,11 +48,9 @@ let selected = null;
 
 // first_request(original server data)
 //gets a list from the server
-let originalList;
-getStarterData()
 
 
-
+getStarterData();
 
 // FUNCTIONS //
 //
@@ -109,50 +108,35 @@ function get_l(path, method='get') {
 
 
 //function specifically for the original data
+//function specifically for the original data
 async function getStarterData() {
   try {
+      
       const response = await post("/get-game-initial-data", {
         userid: userID
       }, 'application/json');
-      let temp = [response.numSquares, response.imageUrl, response.assignedSquares];
-	  //temp[1] += "?userid=" + userID;
-	  temp[1] = "main/3800770.png"
-      /*
-      const imageResponse = await fetch(temp[1]);
-      if (!imageResponse.ok) {
-          throw new Error(`Failed to fetch image (${imageResponse.status} ${imageResponse.statusText})`);
-      }
-      const imageBlob = await imageResponse.blob();
-      // Create a custom URL for the Blob
-      const imageUrl = URL.createObjectURL(imageBlob);
-
-      temp[1] = imageUrl;
-      */
-	 
-      originalList = temp;
-      //full image link
-      img_url = originalList[1];
-      console.log(originalList);
+      
       //number of squares on the grid (needed to get pieces of the image and make grid)
-      total_squares = parseInt(originalList[0]); 
+      total_squares = parseInt(response.numSquares); 
       for (let i=0; i<total_squares;i++) {
         usedList.push(transp_link);
+        server_occupied_list.push(0);
       }
 
       //which pieces are assigned to this user specifically
-      numbersString = originalList[2];
+      numbersString = response.assignedSquares;
       for (let i = 0; i < numbersString.length; i += 2) {
         const substring = numbersString.substring(i, i + 2);
         const intValue = parseInt(substring);
         tempBank.push(intValue);
       }
+
       /* creates HTML image element to be used later in order to create smaller images*/
+      img_url = response.imageUrl+"?userid=" + userID;
       refImage = document.createElement("img");
       refImage.src = img_url;
 
-      callFunctions();
-      const interval = 1; // 1000 milliseconds = 1 second
-      setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
+      refImage.addEventListener("load", callFunctions);
 
                 
   } catch (error) {
@@ -175,9 +159,9 @@ async function sendFinalData() {
   for (i=0; i<occupied.length;i++) {
     if (occupied[i] < 10) {
       occupiedStr += ("0" + occupied[i]);
-  } else {
+    } else {
       occupiedStr += occupied[i];
-  }
+    }
   }
   try {
       const response = await post("path", {
@@ -194,6 +178,7 @@ async function sendFinalData() {
 
 //function specifically for the grid status data
 //add a function that says game over and waits a few seconds before actually switching screens (stage 2, dw rn)
+//add a function that says game over and waits a few seconds before actually switching screens (stage 2, dw rn)
 async function getGameState() {
   try {
       const response = await post("/get-square-locations-data", {
@@ -204,30 +189,44 @@ async function getGameState() {
       if (response.gameStatus === "2") {
         await sendFinalData();
       } 
-
-      server_occupied_list = [];
-      occStr = response.occupiedList;
-      occupied_id_list = occStr;
+	  
+      let new_server_occupied_list = [];
+      occupied_id_list = response.occupiedList;
       
-      for (let i=0; i<occStr.length;i+=2) {
-        if (occStr.substring(i,i+2) === userID) {
-          server_occupied_list.push(1);
-        } else if (occStr.substring(i,i+2) === "00") {
-          server_occupied_list.push(0);
+      //updates server occupied list and used list with any changes made by other players
+      for (let i=0; i<occupied_id_list.length;i+=2) {
+        if (occupied_id_list.substring(i,i+2) === userID) {
+          new_server_occupied_list.push(1);
+        } else if (occupied_id_list.substring(i,i+2) === "00") {
+          new_server_occupied_list.push(0);
         } else {
-          server_occupied_list.push(2);
+          new_server_occupied_list.push(2);
         }
       }
-      
-      for (i=0;i<server_occupied_list.length;i++) {
-        const id = "gridItem2_" + i;
-        const object = document.getElementById(id);
-        const image = object.firstChild;
-        updateImages(object, image, i);
-        //may have to define function earlier
+
+      if (new_server_occupied_list !== server_occupied_list) {
+        for (let i=0;i<new_server_occupied_list.length;i++) {
+          if (server_occupied_list[i] !== 1) {
+            if (new_server_occupied_list[i] === 0) {
+			  server_occupied_list[i] = new_server_occupied_list[i];
+              usedList[i] = transp_link;
+            } else if (new_server_occupied_list[i] === 2) {
+              usedList[i] = stripe_link;
+              server_occupied_list[i] = new_server_occupied_list[i];
+            }
+         
+          }
+        }
+        updateGridImages();
       }
+      //this uopdates all images every interval, which accounts for user and server changes
+      console.log("occupied : " + server_occupied_list);
+      console.log("server occupied" + new_server_occupied_list);
+
+
       
-      //player list
+      
+      //player list. needs to be fixed later
       const player = response.userList;
       let playerList = [];
       for (let i=0;i<(player.length)/8;i++) {
@@ -260,31 +259,20 @@ async function leaveGame() {
 
 //function specifically for sending my squares to the server when i make a placement
 async function sendMySquares() {
-  const tempOcc = [];
+
   let occupiedString = "";
 
-  for (let i=0;i<occupied_id_list.length;i+=2) {
-    let tempStr = occupied_id_list.substring(i,i+2);
-    tempStr = parseInt(tempStr);
-    tempOcc.push(tempStr);
-  }
 
-  for (let i = 0; i < server_occupied_list.length; i ++) {
-    if (server_occupied_list[i] === 0) {
-      tempOcc[i] = 0;
-    } else if (server_occupied_list[i] == 1) {
-      tempOcc[i] = parseInt(userID);
-    }
-  }
-
-  for (let i=0;i<tempOcc.length;i++) {
-    if (tempOcc[i] > 9) {
-      occupiedString += tempOcc[i];
+  for (let i=0;i<server_occupied_list.length;i++) {
+     if (server_occupied_list[i] === 1) {
+	    occupiedString+=userID;
+    } else if (server_occupied_list[i] === 2) {
+	    occupiedString+= occupied_id_list.substring(2*i,2*i+2);
     } else {
-      occupiedString += "0" + tempOcc[i]; 
+	    occupiedString+= "00";
     }
-    
   }
+
   try {
     await post("/send-square-locations-data", {
       userid: userID,
@@ -304,47 +292,28 @@ setTimeout(() => {
 }, 10000); // 10000 milliseconds = 10 seconds
 */
 
-/*
-post("/send-square-locations-data, /get-square-location-data", {name: "data", data: data});
-*/
-
 function callFunctions() {
 
   /* constants for number of rows/columns and the gap between gridded images */
   rows = Math.sqrt(total_squares);
 
   // populate bankList only after the image has loaded, or else the image will just be black */
-  refImage.addEventListener("load", function () {
-      populateBankList();
-  });
-  
+  populateBankList();
+  updateBank();
+  updateGridSize();
+
   //resize the grid and remake event listeners with a screen resize
-  window.addEventListener('resize', updateGame);
+  window.addEventListener('resize', updateGridSize);
   
-  // only creates bank after original image loads
-  refImage.addEventListener("load", function () {
-      createBank();
-  }); 
-
-  //creates grid for first time (just put this here so it only happens after the image loads. could be called in game_grid honestly)
-  updateGame();
-
-  // Call the updateFontSize function on window resize
-  window.addEventListener('resize', updateFontSize);
-
-  // Call the updateFontSize function initially to set the font size
-  document.addEventListener("DOMContentLoaded", function () {
-      updateFontSize();
-  });  
-
   //changes state of mic button based on whether or not it is toggled. Add voice chat stuff here later
   const micButton = document.getElementById('micButton');
   let isMuted = false; // You can change this based on your actual state
 
   micButton.addEventListener('click', () => {
-  isMuted = !isMuted;
-  micButton.classList.toggle('muted');
+    isMuted = !isMuted;
+    micButton.classList.toggle('muted');
   });
-
-  // You can perform your mic mute/unmute functionality here
+  
+  const interval = 1; // 1000 milliseconds = 1 second
+  setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
 }
