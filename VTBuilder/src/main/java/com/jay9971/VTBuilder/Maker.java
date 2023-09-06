@@ -7,7 +7,9 @@ public class Maker {
 		String n = "";
 		if (num < 10) {
 			n += "0" + num;
-		} 
+		} else {
+			n += num;
+		}
 		return n;
 	}
 }

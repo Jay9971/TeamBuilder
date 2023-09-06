@@ -1,24 +1,3 @@
-/* internet link for a transparent overlay, can be downloaded file idk */
-const transp_link = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/HD_transparent_picture.png/1200px-HD_transparent_picture.png";
-
-/* creates HTML image element to be used later in order to create smaller images*/
-const refImage = document.createElement("img");
-refImage.src = img_url;
-
-/* the container in which the final image grid resides*/
-const assembledSquare = document.getElementById("assembledSquare");
-
-/* constants for number of rows/columns and the gap between gridded images */
-const rows = Math.sqrt(total_squares);
-const gapSize = 0; // Adjust the gap between squares as needed
-
-const originalImage = document.createElement("img");
-originalImage.style.width = '100%';
-originalImage.style.height = '100%';
-originalImage.src = img_url;
-
-const original_square = document.getElementById('original-square');
-original_square.appendChild(originalImage);
 
 /* populates assembledList with links to smaller images */
 function populateAssembledList() {
@@ -107,27 +86,4 @@ function updateGame() {
     assembledSquare.appendChild(gridItem2);
   }
 }
-  
-// populate bankList only after the image has loaded, or else the image will just be black */
-refImage.addEventListener("load", function () {
-  populateAssembledList();
-});
-updateGame();
-//resize the grid and remake event listeners with a screen resize
-window.addEventListener('resize', updateGame);
-
-// timer for repeated requests; 
-/*
-const interval = 1000; // 1000 milliseconds = 1 second
-const timerId = setInterval(request (within request function, update the grid), interval);
-*/
-
-// if i need to stop the repeat at some point
-/*
-setTimeout(() => {
-  clearInterval(timerId);
-  console.log('Interval stopped');
-}, 10000); // 10000 milliseconds = 10 seconds
-*/
-
 

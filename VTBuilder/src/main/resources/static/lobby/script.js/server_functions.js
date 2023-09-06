@@ -7,6 +7,7 @@
 let player_list;
 const userID = window.location.search.substring(8,10);
 const lobbyID = window.location.search.substring(21,25);
+//doesnt work???
 console.log(userID + " iewudgwleud " + lobbyID);
 
 // used to ask the server for something and recieve something back, or to just send it something

@@ -117,7 +117,7 @@ public class VTBuilderController {
 	/** Receives the location data and adds it to database archive**/
 	@RequestMapping(value = "/send-square-locations-data", method=RequestMethod.POST)
 	@ResponseBody
-	public void receiveData(@RequestParam String data) {
+	public void receiveData(@RequestBody String data) {
 		try {
 			ObjectMapper objMapper = new ObjectMapper();
 			SquareRequestData rqData = objMapper.readValue(data, SquareRequestData.class);
@@ -126,6 +126,8 @@ public class VTBuilderController {
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
 			
 			lobby.setData(rqData.getOccupiedSquares());
+			logger.info("Occupied Squares: " + rqData.getOccupiedSquares());
+			archiveRepo.save(lobby);
 			
 		} catch (Exception e) {
 			
@@ -143,7 +145,6 @@ public class VTBuilderController {
 			
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
-			
 			ArrayList<String> players = new ArrayList<String>();
 			for (long u=1; u < usersRepo.count(); u++) {
 				Users us = usersRepo.findById(u).get();
@@ -157,7 +158,6 @@ public class VTBuilderController {
 			for (String player : players) {
 				player_list += player;
 			}
-			
 			SquareResponseData dataObj = new SquareResponseData(lobby.getData(), Integer.toString(lobby.getIsStarted()), player_list);
 			
 		    String jsonData = objMapper.writeValueAsString(dataObj);
@@ -198,7 +198,6 @@ public class VTBuilderController {
 				}
 			}
 			
-			logger.info("1");
 
 			int squares_left = lobby.getSquares();
 			
@@ -210,31 +209,19 @@ public class VTBuilderController {
 			for (int i=0; i < squares.length(); i+=2) {
 				list_squares.add(squares.substring(i, i+2));
 			}
-			logger.info("2.5");
 			
 			int count = 0;
 			String player_squares = "";
-			logger.info("line 1");
-			logger.info("Total squares(get-initial)" + Integer.toString(total_squares));
-			logger.info("Total players(get-initial)" + Integer.toString(total_players));
 			while (count < (int)(total_squares/total_players)) {
-				logger.info("line 2");
 				int rand = (int)(Math.random() * total_squares);
-				logger.info("line 3");
 				if (list_squares.get(rand).charAt(1) != 'F') {
-					logger.info("line 4");
 					player_squares += list_squares.get(rand);
-					logger.info("line 5");
 					count++;
-					logger.info("line 6");
 					squares_left--;
-					logger.info("line 7");
 					list_squares.set(rand, "FF");
-					logger.info("line 8");
 				}
 			}
 			
-			logger.info("2");
 			squares = "";
 			for (String square : list_squares) {
 				squares += square;
@@ -246,7 +233,6 @@ public class VTBuilderController {
 			dataObj.setNumSquares(Integer.toString(total_squares));
 			
 			
-			logger.info("3");
 			if (squares_left == 0) {
 				squares = "";
 				for (int i=0; i < total_squares; i++) {
@@ -255,13 +241,14 @@ public class VTBuilderController {
 			}
 			
 			lobby.setData(squares);
+			lobby.setSquares(squares_left);
 			
 			archiveRepo.save(lobby);
 			
 			
 		    String jsonData = objMapper.writeValueAsString(dataObj);
 		    
-		    logger.info("4");
+
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
 		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
@@ -342,7 +329,7 @@ public class VTBuilderController {
 			lobby.setSquares(total_squares);
 			
 			String squareData = "";
-			for (int i=1; i <= total_squares; i++) {
+			for (int i=0; i < total_squares; i++) {
 				squareData += Maker.serialize(i);
 			}
 			
