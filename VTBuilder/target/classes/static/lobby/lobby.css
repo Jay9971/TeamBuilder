@@ -1,0 +1,46 @@
+
+
+
+/* adjust this somehow*/
+#heading {
+  font-family: 'Titan One';  
+  color: white;  
+  text-align: center;
+}
+#paragraph {
+  font-family: 'Times New Roman';  
+  color: white;
+  margin-left:10%;
+  margin-right:5%;
+  text-align: left;
+}
+
+#textContainer {
+  height:20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 2px solid black;
+  color: black;
+  border-radius:50px;
+}
+.dark-mode #textContainer {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+#lobbyCode {
+  position: relative;
+  top:-8%;
+}
+
+
+
+
+
+
+
+
+
