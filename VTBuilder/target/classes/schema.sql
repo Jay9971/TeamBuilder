@@ -4,7 +4,6 @@ create table archive (
 	data varchar(255) not null,
 	squares int not null,
 	isStarted int not null,
-	timer int not null,
 	primary key (id)
 );
 

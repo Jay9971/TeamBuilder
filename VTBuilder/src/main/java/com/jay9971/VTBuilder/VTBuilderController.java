@@ -2,8 +2,12 @@ package com.jay9971.VTBuilder;
 
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Timer;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -35,6 +39,8 @@ import com.jay9971.VTBuilder.DataSchemas.*;
 import com.jay9971.VTBuilder.Repository.Archive;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ClassRelativeResourceLoader;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -68,6 +74,15 @@ public class VTBuilderController {
 	public ModelAndView sendGamePage() {
 	    ModelAndView modelAndView = new ModelAndView();
 	    modelAndView.setViewName("gameplay_screen.html");
+	    return modelAndView;
+	}
+	
+	/** Sends game HTML page**/
+	@RequestMapping(value="/dummy", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView sendDummy() {
+	    ModelAndView modelAndView = new ModelAndView();
+	    modelAndView.setViewName("dummy.html");
 	    return modelAndView;
 	}
 	
@@ -114,6 +129,69 @@ public class VTBuilderController {
 	
 	
 	
+	
+	
+	@RequestMapping(value = "/get-audio-stream-from-server381845", method=RequestMethod.GET, produces = "audio/mpeg")
+	public ResponseEntity<byte[]> sendAudio(@RequestParam("userid") String data, HttpServletResponse response) throws IOException{
+		Users user = usersRepo.findById((long)Integer.parseInt(data)).get();
+		String audio = "audio/audio_" + archiveRepo.findById(user.getLobby()).get().getId() + ".mp3";
+		
+        Resource resource = new ClassPathResource(audio);
+        if (resource.exists()) {
+            try (InputStream inputStream = resource.getInputStream()) {
+                byte[] bytes = inputStream.readAllBytes();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType("audio/mpeg"))
+                        .body(bytes);
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/send-audio-stream481", method=RequestMethod.POST)
+	@ResponseBody
+	public void receiveAudio(@RequestBody String data) throws IOException, URISyntaxException {
+		logger.info("function called");
+		
+		ObjectMapper objMapper = new ObjectMapper();
+		AudioDataReceiveRequest rqData = objMapper.readValue(data, AudioDataReceiveRequest.class);
+		
+		
+        Users user = usersRepo.findById((long) Integer.parseInt(rqData.getUserid())).get();
+        Archive lobby = archiveRepo.findById(user.getLobby()).get();
+		
+        byte[] audioBytes = rqData.getAudio();
+			
+        String fileName = "audio_" + lobby.getId() + ".mp3"; 
+        
+		Resource resource = new ClassPathResource("audio/" + fileName);
+			
+
+        URL resourceUrl = resource.getURL();
+        String saveDirectory = new File(resourceUrl.toURI()).getParent() + File.separator;
+
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(saveDirectory, fileName))) {
+            fileOutputStream.write(audioBytes);
+        } 
+        
+	}
+			
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/** Sends initial data for post game**/
 	@RequestMapping(value = "/switch-to-lobby", method=RequestMethod.POST)
 	@ResponseBody
@@ -122,8 +200,8 @@ public class VTBuilderController {
 			ObjectMapper objMapper = new ObjectMapper();
 			LobbyRequestData rqData = objMapper.readValue(data, LobbyRequestData.class);
 			
-			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
-			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+			//Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
+			//Archive lobby = archiveRepo.findById(user.getLobby()).get();
 			
 			
 			/*if (lobby.getTimer() == -1) {
@@ -138,14 +216,15 @@ public class VTBuilderController {
 			}*/
 			
 			
-			lobby.setTimer(-1);
+			//lobby.setTimer(-1);
 			PostGameIntervalResponseData dataObj;
+			dataObj = new PostGameIntervalResponseData("1", "");
 			
-			if (lobby.getTimer() == 0) {
+			/*if (lobby.getTimer() == 0) {
 				dataObj = new PostGameIntervalResponseData("1", "");
 			} else {
 				dataObj = new PostGameIntervalResponseData("0", null);
-			}
+			}*/
 			
 			
 		    String jsonData = objMapper.writeValueAsString(dataObj); 
@@ -597,7 +676,7 @@ public class VTBuilderController {
 			
 			//Generate new lobby + code
 			long lobbyCode = archiveRepo.count() + 1000;
-			archiveRepo.save(new Archive(lobbyCode, "image-url", "", -1, 0, -1));
+			archiveRepo.save(new Archive(lobbyCode, "image-url", "", -1, 0));
 			
 			//Generate new user + userid
 			long total_users = usersRepo.count();

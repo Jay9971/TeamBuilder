@@ -14,7 +14,7 @@ public class Archive {
 	
 	private int squares;
 	
-	private int timer;
+	//private String audio;
 	
 	@Id 
 	private long id;
@@ -23,13 +23,14 @@ public class Archive {
 		
 	}
 	
-	public Archive(long id, String image, String data, int squares, int isStarted, int timer) {
+	public Archive(long id, String image,  String data, int squares, int isStarted) {
 		this.image = image;
 		this.id = id;
 		this.data = data;
 		this.squares = squares;
 		this.isStarted = isStarted;
-		this.timer = timer;
+		//this.audio = audio;
+		//this.timer = timer;
 	}
 	
 	public String getImage() {
@@ -74,19 +75,28 @@ public class Archive {
 		this.isStarted = isStarted;
 	}
 
-	public int getTimer() {
+	/*public int getTimer() {
 		return timer;
 	}
 
 	public void setTimer(int timer) {
 		this.timer = timer;
+	}*/
+	
+	/*public String getAudio() {
+		return audio;
 	}
+
+	public void setAudio(String audio) {
+		this.audio = audio;
+	}*/
 
 	@Override
 	public String toString() {
 		return "Archive [image=" + image + ", isStarted=" + isStarted + ", data=" + data + ", squares=" + squares
-				+ ", timer=" + timer + ", id=" + id + "]";
-	}
+				+ ", id=" + id + "]";
+	}	
+
 
 	
 
