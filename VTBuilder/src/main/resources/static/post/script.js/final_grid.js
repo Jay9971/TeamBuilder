@@ -1,5 +1,4 @@
-
-/* populates assembledList with links to smaller images */
+/* populates assembledList with links to the smaller images */
 function populateAssembledList() {
 
   /* creates a canvas object but doesn't place it anywhere*/
@@ -13,10 +12,10 @@ function populateAssembledList() {
   // Draw the linked image on the canvas
   ctx.drawImage(refImage, 0, 0); 
 
-  // Loop through the coordinates in the temp to create the corresponding images
+  // Loop through the coordinates in the final assembled list to create the corresponding images
   for (number of assembledList) {
 
-    if (number !== "") {
+    if (number !== "xx") {
       /*width and height are always gonna be 1280, but just in case :) */
       const squareWidth = canvas.width / rows;
       const squareHeight = canvas.height / rows;
@@ -57,7 +56,8 @@ function updateImages(obj, im, number) {
   im.src = assembledURLs[number];
 }
 
-function updateGame() {
+//updates assmbled grid when resized. just like game grid in main game
+function updateGridDimensions() {
 
   //find width of the current game grid and calculate each square size
   const assembledWidth = assembledSquare.offsetWidth;
@@ -79,9 +79,9 @@ function updateGame() {
     gridItem2.classList.add("grid-item2");
     const img = document.createElement("img");
     img.classList.add("image");
-    img.src = usedList[i]; // Set an initial empty source link
+    img.src = assembledURLs[i]; // Set an initial empty source link
     gridItem2.appendChild(img); 
-    //add all the event listeners
+    //add  the event listeners
     updateImages(gridItem2, img, i);
     assembledSquare.appendChild(gridItem2);
   }

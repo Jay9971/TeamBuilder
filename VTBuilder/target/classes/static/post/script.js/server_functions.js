@@ -1,53 +1,17 @@
-// FUNCTIONS //
-//
-//
-//
-//
 
-// used to ask the server for something and recieve something back, or to just send it something
-function post(path, requestData, content_type) {
-	return new Promise((resolve, reject) => {
-		fetch(path, {
-		method: 'POST',
-		headers: {
-			'Content-Type': content_type
-		},
-		body: JSON.stringify(requestData)
-		}).then(response => response.json())
-		.then(data => {
-			resolve(data);
-		})
-		.catch(error => {
-			reject(error);
-		});
-	});
-}
 
-// used specifically to ask the server to switch pages
-function get(path, lobby_code, method='get') {
-	
-    const form = document.createElement('form');
-    form.method = method;
-    form.action = path;
-
-    const hiddenField = document.createElement('input');
-    hiddenField.type = 'hidden';
-    hiddenField.name = 'userid'; 
-    hiddenField.value = lobby_code;
-    form.appendChild(hiddenField);
-
-    document.body.appendChild(form);
-    form.submit();
-    
-}
-
-//function specifically for the original data
-async function getStarterData() {
+//done
+//sends the two slider data points to the server. in another function, it switches to the loading page
+async function sendSurveyData() {
     try {
-        const response = await post("path", {
-          userid: userID
+        await post("/send-survey-data", {
+          userid: userID,
+          selfRating: slider1Value.toString(),
+          teamRating: slider2Value.toString()
         }, 'application/json');
-        return [response.imgPath, response.finalOccupiedList];
+
+        getStarterData();
+             
     } catch (error) {
         console.error(error);
         // You can re-throw the error if needed
@@ -55,25 +19,62 @@ async function getStarterData() {
     }
 }
 
-//variables for data needed for the assembled square assembly
-const tempList = getStarterData();
-//full image link
-const img_url = tempList[0];
-//number of squares on the grid (needed to get pieces of the image and make grid)
-const total_squares = (tempList[1]).length;
-//list of all the grid placements of the team assembled image
-const assembledList = tempList[1];
-//list for the corresponding urls
-let assembledURLs = [];
+//function specifically for the original data. calls rest of program (dependent on original data) after
+async function getStarterData() {
+    try {
+        const response = await post("/send-post-game-initial-data", {
+          userid: userID
+        }, 'application/json');
+        
+        
+
+        //change in MAIN GAME as well. link to original image
+        img_url = "/get-image-from-server48281" + "?userid=" + userID;
+
+        //list of all the grid placements of the team assembled image
+        assembledList = [];
+        //adds all coordinates to the list
+        numbersString = response.finalOccupiedList;
+        for (let i = 0; i < numbersString.length; i += 2) {
+            const substring = numbersString.substring(i, i + 2);
+            let intValue;
+            if (substring != "xx") {
+                intValue = parseInt(substring);
+            } else {
+                intValue = "xx"
+            }
+            assembledList.push(intValue);
+        }
+        
+        teamScore = response.teamAccuracy;
+        analytics = response.analytics;
+
+        //number of squares on the grid (needed to get pieces of the image and make grid), and num of rows
+        total_squares = (assembledList).length;
+
+        //CREATE AND IMPLEMENT A STRINGIFY/LISTIFY FUNCTION
+
+        //list for the corresponding urls. similar to tempDict, populated in final_grid
+        assembledURLs = [];
+
+        //calls program after image has loaded
+        img_url.addEventListener('load', callFunctions);
+             
+    } catch (error) {
+        console.error(error);
+        // You can re-throw the error if needed
+        throw error;
+    }
+}
 
 //function for switching to the lobby screen 
 async function lobbySwitch() {
     try {
-        const response = await post("path", {
+        const response = await post("/switch-to-reflection", {
           userid: userID
         }, 'application/json');
-        if (response.status === "1") {
-            get(response.lobbyPath, userID);
+        if (response.status === "3") {
+            get(response.reflectionPath, userID);
         }
     } catch (error) {
         console.error(error);
@@ -82,7 +83,45 @@ async function lobbySwitch() {
     }
 }
 
-//checks every second if the lobby needs to be switched to. ideally after ten
-//seconds, it should switch to the lobby screen
-const interval = 1000; // 1000 milliseconds = 1 second
-const timerId = setInterval(lobbySwitch, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
+//function to signal to server to end this page
+async function endPostGame() {
+    try {
+        await post("/end-post-game", {
+          userid: userID
+        }, 'application/json');
+
+    } catch (error) {
+        console.error(error);
+        // You can re-throw the error if needed
+        throw error;
+    } 
+}
+
+//rest of program
+//add button functions
+function callFunctions() {
+    endAnimation();
+    showPage(3);
+
+    /* the container in which the assembled grid resides*/
+    assembledSquare = document.getElementById("assembled-square");
+
+    /* constants for number of rows/columns*/
+    rows = Math.sqrt(total_squares);
+
+    //populates list of urls
+    populateAssembledList();
+
+    //resizing grid
+    window.addEventListener('resize', updateGridDimensions);
+    updateGridDimensions();
+
+    //puts original image onto the screen
+    finalImage = document.querySelector('.finalImage');
+    finalImage.src = img_url;
+
+    interval = 10; // 1000 milliseconds = 1 second
+    setInterval(lobbySwitch, interval); // every second, calls lobbySwitch, which checks if someone has switched to the lobby yet
+}
+
+

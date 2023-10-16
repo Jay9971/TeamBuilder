@@ -12,6 +12,14 @@ public class Users {
 	
 	private long lobby;
 	
+	private int playerAccuracy;
+	
+	private int numPlacements;
+	
+	private String selfRating;
+	
+	private String teamRating;
+	
 	@Id
 	private long id;
 	
@@ -24,6 +32,39 @@ public class Users {
 		this.name = name;
 		this.squares = squares;
 		this.lobby = lobby;
+	}
+	
+	
+	public String getSelfRating() {
+		return selfRating;
+	}
+
+	public void setSelfRating(String selfRating) {
+		this.selfRating = selfRating;
+	}
+
+	public String getTeamRating() {
+		return teamRating;
+	}
+
+	public void setTeamRating(String teamRating) {
+		this.teamRating = teamRating;
+	}
+
+	public int getPlayerAccuracy() {
+		return playerAccuracy;
+	}
+
+	public void setPlayerAccuracy(int playerAccuracy) {
+		this.playerAccuracy = playerAccuracy;
+	}
+
+	public int getNumPlacements() {
+		return numPlacements;
+	}
+
+	public void setNumPlacements(int numPlacements) {
+		this.numPlacements = numPlacements;
 	}
 
 	public String getName() {
@@ -60,8 +101,14 @@ public class Users {
 
 	@Override
 	public String toString() {
-		return "Users [name=" + name + ", squares=" + squares + ", lobby=" + lobby + ", id=" + id + "]";
+		return "Users [name=" + name + ", squares=" + squares + ", lobby=" + lobby + ", playerAccuracy="
+				+ playerAccuracy + ", numPlacements=" + numPlacements + ", selfRating=" + selfRating + ", teamRating="
+				+ teamRating + ", id=" + id + "]";
 	}
+
+	
+
+	
 	
 	
 

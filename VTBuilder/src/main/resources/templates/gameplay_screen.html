@@ -4,15 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VTBuilder</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,700&display=swap">
+<link rel="icon" href="images/favicon.png" type="image/x-icon">
 
 <link rel="stylesheet" href="main/gameplay_screen.css">
 <link rel="stylesheet" href="common/common.css">
 
 <script src="common/script.js/server_functions.js" defer></script>
 <script src="main/script.js/server_functions.js" defer></script>
+
 <script src="common/script.js/adaptive_elements.js" defer></script>
 
+<script src="main/script.js/timer.js" defer></script>
 <script src="main/script.js/game_grid.js" defer></script>
 <script src="main/script.js/image_bank.js" defer></script>
 
@@ -43,6 +45,12 @@
         <div class="toggle-switch" id="darkModeToggle">
             <div class="toggle-knob"></div>
         </div>
+      </div>
+
+      <button class = "button" id="leaveButton" onclick=leaveGame() >Leave Lobby</button>
+
+      <div class="timer">
+        <span id="minutes">00</span>:<span id="seconds">00</span>
       </div>
 
       <div class="space-group" id="end"></div>
@@ -96,7 +104,7 @@
             <div class="column-container" id="buttons-container">
                 <button class = "button text" id="startButton" onclick=clearGrid() >Clear Grid</button>
                 <div class="space-group" id="verticalGap"></div>
-                <button class = "button text" id="closeButton" onclick=leaveGame() >Leave Lobby</button>
+                <button class = "button text" id="closeButton" onclick=endGame() >End Game</button>
             </div>
           </div>
 

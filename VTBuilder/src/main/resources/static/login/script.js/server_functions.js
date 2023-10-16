@@ -1,27 +1,35 @@
-
 //used to switch to a lobby page
-function get_lobby(path, lobby_code, userid, method='get') {
+function get_lobby(path, userid, lobby_code, method='get') {
 	
     const form = document.createElement('form');
     form.method = method;
     form.action = path;
 
+    const hiddenField3 = document.createElement('input');
+    hiddenField3.type = 'hidden';
+    hiddenField3.name = 'darkModeStatus'; 
+    hiddenField3.value = darkModeStatus.toString();
+    form.appendChild(hiddenField3);
+
     const hiddenField = document.createElement('input');
     hiddenField.type = 'hidden';
     hiddenField.name = 'userid'; 
-    hiddenField.value = lobby_code;
+    hiddenField.value = userid;
     form.appendChild(hiddenField);
     
     const hiddenField2 = document.createElement('input');
     hiddenField2.type = 'hidden';
     hiddenField2.name = 'lobby'; 
-    hiddenField2.value = userid;
+    hiddenField2.value = lobby_code;
     form.appendChild(hiddenField2);
 
+   
     document.body.appendChild(form);
     form.submit();
     
 }
+
+//write another field into get to send the darkmode status
 
 //sends nickname and code to server, recieves a path and user ID. user ID and path are then passed back to get an html page with the user ID (lobby)
 async function joinLobby() {
@@ -43,7 +51,7 @@ async function joinLobby() {
 async function createLobby() {
     try {
         const response = await post("/create-lobby", {
-            name: nickname
+            name: nickname,
         }, 'application/json');
         get_lobby(response.url, response.code, response.lobby);
     } catch (error) {

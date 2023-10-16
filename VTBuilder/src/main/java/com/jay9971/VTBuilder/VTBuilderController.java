@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.ArrayList;
 import org.springframework.core.io.Resource;
@@ -36,6 +37,8 @@ import com.jay9971.VTBuilder.Repository.Users;
 import com.jay9971.VTBuilder.Repository.UsersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jay9971.VTBuilder.DataSchemas.*;
+import com.jay9971.VTBuilder.Repository.Analytics;
+import com.jay9971.VTBuilder.Repository.AnalyticsRepository;
 import com.jay9971.VTBuilder.Repository.Archive;
 
 import org.springframework.core.io.ClassPathResource;
@@ -56,6 +59,9 @@ public class VTBuilderController {
 	
 	@Autowired
 	private UsersRepository usersRepo;
+	
+	@Autowired
+	private AnalyticsRepository analyticsRepo;
 	
 	
 	/** Redirects to login page from default page **/
@@ -187,6 +193,27 @@ public class VTBuilderController {
 	
 	
 	
+	/** Sends initial data for post game**/
+	@RequestMapping(value = "/return-to-lobby", method=RequestMethod.POST)
+	@ResponseBody
+	public void bootThem(@RequestBody String data) {
+		try {
+			ObjectMapper objMapper = new ObjectMapper();
+			LobbyRequestData rqData = objMapper.readValue(data, LobbyRequestData.class);
+			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
+			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+			
+			lobby.setIsStarted(lobby.getIsStarted()-1);
+			
+			usersRepo.delete(user);
+			
+			
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	
 	
 	
 	
@@ -251,12 +278,23 @@ public class VTBuilderController {
 			
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+			Analytics repo = analyticsRepo.findById((long)0).get();
 			
-			PostGameResponseData dataObj = new PostGameResponseData(lobby.getData());
+			PostGameResponseData dataObj = new PostGameResponseData(lobby.getData(), repo.getTeamScore(), "analytics");
 			
+			int uCount = 0;
+			for (long u=0; u < usersRepo.count(); u++) {
+				Users us = usersRepo.findById(u).get();
+				if (us.getLobby() == lobby.getId()) {
+					uCount++;
+				}
+			}
+			
+			lobby.setIsStarted(uCount);
+			archiveRepo.save(lobby);
 			
 		    String jsonData = objMapper.writeValueAsString(dataObj); 
-
+		    
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
 		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
@@ -264,6 +302,78 @@ public class VTBuilderController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/end-game", method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> recieveAnalytics(@RequestBody String data) {
+		try {
+			
+			ObjectMapper objMapper = new ObjectMapper();
+			EndGameRequestData rqData = objMapper.readValue(data, EndGameRequestData.class);
+			
+			/*if (analyticsRepo.count() == 0) {
+				Analytics r = new Analytics();
+				analyticsRepo.save(r);
+			}
+			
+			Analytics repo = analyticsRepo.findById((long)0).get();*/
+
+			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
+			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+
+			lobby.setIsStarted(2);
+			//repo.setTimeElapsed(rqData.getTimeElapsed());
+			
+			archiveRepo.save(lobby);
+			//analyticsRepo.save(repo);
+			
+			LobbyRequestData dataObj = new LobbyRequestData();
+			dataObj.setUserid("here it is ya bitch");
+			String jsonData = objMapper.writeValueAsString(dataObj);
+			
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.APPLICATION_JSON);
+		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/** Receives the location data and adds it to database archive**/
+	@RequestMapping(value = "/send-survey-data", method=RequestMethod.POST)
+	@ResponseBody
+	public void recieveSurveyData(@RequestBody String data) {
+		try {
+			ObjectMapper objMapper = new ObjectMapper();
+			SurveyRequestData rqData = objMapper.readValue(data, SurveyRequestData.class);
+			
+			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
+			
+			user.setSelfRating(rqData.getSelfRating());
+			user.setTeamRating(rqData.getTeamRating());
+			
+			usersRepo.save(user);
+			
+			
+			
+		} catch (Exception e) {
+			
+		}
+	}
+	
 	
 	
 	
@@ -279,6 +389,29 @@ public class VTBuilderController {
 			
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+			Analytics repo = analyticsRepo.findById((long)0).get();
+			
+			user.setNumPlacements(rqData.getNumPlacements());
+			user.setPlayerAccuracy(rqData.getPlayerAccuracy());
+			
+			int totalAccs = 0;
+			int c = 0;
+			for (long u=0; u < usersRepo.count(); u++) {
+				Users us = usersRepo.findById(u).get();
+				if (us.getLobby() == lobby.getId()) {
+					totalAccs += us.getPlayerAccuracy();
+					c++;
+				}
+			}
+			
+			double teamScore = totalAccs/c;
+			DecimalFormat df = new DecimalFormat("0.00"); 
+			String formatTeamScore = df.format(teamScore);
+			repo.setTeamScore(formatTeamScore);
+			
+			
+			
+			
 			
 			String dat = lobby.getData();
 			ArrayList<String> dat_wrapper = new ArrayList<String>();
@@ -294,7 +427,7 @@ public class VTBuilderController {
 			
 			for (int i=0; i < dat_from_user.size(); i++) {
 				String slot = dat_from_user.get(i);
-				if (slot.charAt(1) != '0') {
+				if (slot.charAt(1) != 'x') {
 					dat_wrapper.set(i, slot);
 				}
 			}
@@ -306,6 +439,7 @@ public class VTBuilderController {
 			
 			lobby.setData(finalData);
 			archiveRepo.save(lobby);
+			usersRepo.save(user);
 			
 			
 			PostGameUrlData dataObj = new PostGameUrlData("/endgame");
@@ -481,7 +615,7 @@ public class VTBuilderController {
 	
 	@RequestMapping(value = "/leave-game", method=RequestMethod.POST)
 	@ResponseBody
-	public void leaveGame(@RequestBody String data) {
+	public ResponseEntity<String> leaveGame(@RequestBody String data) {
 		try {
 			ObjectMapper objMapper = new ObjectMapper();
 			LobbyRequestData rqData = objMapper.readValue(data, LobbyRequestData.class);
@@ -500,9 +634,16 @@ public class VTBuilderController {
 				archiveRepo.delete(lobby);
 			}
 			
+			LobbyRequestData response = new LobbyRequestData("function_code:0C9472F");
 			
+		    String jsonData = objMapper.writeValueAsString(response);
+		    
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.APPLICATION_JSON);
+		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
 			
 		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 	}
@@ -658,8 +799,10 @@ public class VTBuilderController {
 	@RequestMapping(value="/login", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView login() {
+		
 	    ModelAndView modelAndView = new ModelAndView();
 	    modelAndView.setViewName("login.html");
+	    
 	    return modelAndView;
 	}
 	

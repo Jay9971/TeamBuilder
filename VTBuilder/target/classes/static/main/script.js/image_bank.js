@@ -62,5 +62,6 @@ function clearGrid() {
   }
   updateBank();
   sendMySquares();
+  updateGridImages();
 }
 

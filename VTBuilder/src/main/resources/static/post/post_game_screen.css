@@ -1,241 +1,209 @@
-/* optimize this later to prevent excess repitition of things like flex, centering, etc */
-/* could use better commenting later and renamed variables */
-
-body {
-  margin: 0;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.question {
+    text-align: bottom;
+    width: 100%;
+    height: 50%;
+    font-weight: normal;
 }
 
-/* css for making the game content load in only after the animation. animation is currently disabled.
-/*
-.underlying-content {
-  display: none;
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:50%;
+    width:60%;
 }
-.page-loaded .underlying-content {
-  display: block;
-  animation: fadeIn 5s ease-in-out forwards; 
-}
-*/
-
-/* foreground animation (logo fades out, and then all the squares fade out randomly */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-.overlay2 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  backdrop-filter: blur(50px); /* Apply blur effect */
-  z-index: 6; /* Place the overlay on top */
-  animation: fadeOut 4s 5s forwards;
-}
-@keyframes fadeOut {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-  }
-}
-#gridContainer2 {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
-  width: 100vw;
-  height: 100vh;
-  z-index: 5;
-  position: absolute;
-  top:0;
-  left:0;
-  pointer-events: none;
-}
-.pixel {
-  background-color: white;
-  animation: fadeOut 1s linear forwards;
-  opacity: 1;
-  transform-origin: center center;
-  position: relative;
-}
-@keyframes fadeOut {
-  0% {
-      opacity: 1;
-  }
-  100% {
-      opacity: 0;
-  }
-}
-.logo-container {
-  animation: fadeOut 1s 2s forwards;
-  z-index:7;
-  position: absolute;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
-}
-@keyframes fadeOut {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-  }
-}
-#logo {
-  width: 50%;
-  height: auto;
-  opacity: 1; /* Initially fully visible */
-  transition: opacity 1s; /* Add a transition for smooth fading */
-}
-
-/* background*/
-.grid-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: grid;
-  width: 100vw;
-  height: 100vh;
-  grid-gap: 0px;
-  justify-content: center; 
-  align-content: center; 
-  overflow: hidden; 
-  z-index: -1;
-}
-.grid-item {
-  width: 100%;
-  height: 100%;
-  background-color: beige; /* Default color */
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-   /* Semi-transparent background color */
-  backdrop-filter: blur(50px); /* Apply blur effect */
-  z-index: 1; /* Place the overlay on top */
-}
-
-/* holds game stuff*/
-.game-container {
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  flex-direction: column;
-  z-index:2;
-  background-color: transparent;
-}
-
-/* VTBuilder Logo*/
-.logo {
-  height:20vh;
-  width: 100vw;
-}
-.logo img {
-  height: 100%;
-  width: auto;
-  display: block;
-  margin: 0 auto; /* Center the image horizontally */
-}
-
-/* contains interactive game elements*/
-.container {
-  display: flex;
-  position: relative;
-  top: 0;
-  left: 0;
-  height: 80vh;
-  width: 100vw;
-  justify-content: center;
-  align-items: center;
-  gap:10px;
-}
-
-/*style for orientation-changing columns (they become rows on a narrow screen)*/
-.column {
-  width:40%;
-  height:90%;
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  
-}
-
-#column-one {
-  justify-content:right;
-}
-/* containa the original image */
-.original-square {
-  flex-direction: column;
-  border: 4px solid rgb(0, 0, 0,0.3);    
-  border-radius: 10px;
-  position: relative;
-}
-/* comment some of the x-y position adjustments. maybe use math to make it less guessed. */
-.original-square:before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top:+1px;
-  border-radius: 7px; 
-  border-top: 3px solid rgb(255, 255, 255,0.7);
-  pointer-events: none;  
-}
-.original-square:after {
-  content: "";
-  position: absolute;
-  width: calc(100% + 5px);
-  height: calc(100% );
-  top:4px;
-  left:-2px;
-  border-radius:10px;
-  pointer-events: none;
-  border-bottom: 3px solid rgb(255, 255, 255,0.7);
-}
-
-/*container for all the finally assembled images*/
-.assembled-square {
-  position: relative;
-  display: grid;
-  width: 80%;
-  height:80%;
-  overflow: hidden;
-  background-color: rgb(10,10,10,0.3);  
-  border-radius: 10px;
-}
-.image {
-  width: 100%;
-  height: 100%;
-}
-
-/*creating individual images in final_grid.js. not actually in html*/
-.canvas {
-  width:100%;
-  height:100%;
+.slider {
+    -webkit-appearance: none; /* Remove default styles for Webkit browsers */
+    appearance: none; /* Remove default styles */
+    width: 100%; /* Ensure the slider takes up the full width of the container */
+    height: 20%; /* Adjust this value to make the slider track thicker vertically */
+    background: #ccc; /* Set the background color of the slider track */
+    border-radius: 50px; /* Rounded corners for the track */
 }
 
 
+/* Style the slider thumb (the handle) */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Remove default styles for Webkit browsers */
+    appearance: none; /* Remove default styles */
+    width: 30px; /* Adjust this value to make the slider thumb wider */
+    height: 30px; /* Adjust this value to make the slider thumb taller */
+    background:rgb(113, 113, 157); /* Set the background color of the slider thumb */
+    border-radius: 50%; /* Make the thumb round */
+    cursor: pointer; /* Add a cursor pointer */
+}
+
+.slider-text {
+    text-align: center;
+}
+.dark-mode .slider-text {
+    color:white;
+}
+
+#save-button {
+    margin-top: 20px;
+    font-size: 15px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: bold;
+}
+
+#question-square {
+    align-items: center;
+    justify-content: center;
+}
+.space-group {
+    height:5%;
+}
+
+#page-1 {
+    height: 65%;
+    width: 100%;
+}
+
+#page-2 {
+    height: 65%;
+    width: 100%;
+}
+
+#page-3 {
+    height: 65%;
+    width: 100%;
+    gap:4%;
+}
 
 
+#page-4 {
+    height: 65%;
+    width: 100%;
+    
+}
+.sliderOneContainer {
+    width: 69%;
+    height: 20%;
+    font-family: 'Raleway', sans-serif;
+}
+
+.sliderTwoContainer {
+    width: 69%;
+    height: 20%;
+}
 
 
+.sendButtonHolder {
+    width: 200px;
+    height:150px;
+}
+
+#loadingText {
+    height:10%;
+    width: 60%;
+}
+
+#loading {
+    font-size: 10px;
+    height: 100%;
+    width: 100%;
+    
+}
+
+.space-group-superficial {
+    height:20%;
+}
+
+.finalImage {
+    border-radius: 50px;
+}
+
+.instructions-row {
+    height:100%;
+}
+.label {
+    display:flex;
+    width:200px;
+    height:50px;
+    justify-content: center;
+    align-items: center;
+    
+    background-color:transparent;
+    color:black;
+    font-weight:bold;
+}
+.dark-mode .label {
+    
+    color: white;
+}
+
+#endPostButton {
+    width: 40%;
+    height: 100%;
+}
+
+#analyticsButton {
+    width: 40%;
+    height: 100%;
+}
+
+#endGameButtons {
+    width: 300px;
+    height: 50px;
+}
+
+.verticalButtonSpace {
+    width:10px;
+}
+
+.reflection-container {
+    
+    width: 70%;
+    height:80%;
+    border-radius: 15px;
+    background-color: rgba(149, 132, 151, 0.739);
+}
+
+.reflectionButtons {
+    width: 300px;
+    height: 50px;
+    margin-top:10px;
+}
+
+#toLobby {
+    width: 40%;
+    height: 100%;
+}
+
+#back {
+    width: 40%;
+    height: 100%;
+}
+
+
+.reflection-instructions {
+    color:white;
+    width:90%;
+    height:10%;
+    font-weight:bold;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5%;
+    text-align: center;
+}
+
+.text-input {
+    height:90%;
+    width:90%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.entry-text {
+    height:85%;
+    width:100%;
+    border-radius: 15px;;
+    background-color:rgb(231, 229, 229);
+    color:black;
+}
+.dark-mode .entry-text {
+    background-color:rgb(52, 52, 52);
+    color:white;
+}

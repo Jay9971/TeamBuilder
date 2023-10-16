@@ -3,14 +3,35 @@ package com.jay9971.VTBuilder.DataSchemas;
 public class SquareRequestData {
 	private String occupiedSquares;
 	private String userid;
+	private int playerAccuracy;
+	private int numPlacements;
 	
 	public SquareRequestData() {
 		
 	}
 	
-	public SquareRequestData(String square, String userid) {
+	public SquareRequestData(String square, String userid, int playerAccuracy, int numPlacements) {
 		this.occupiedSquares = square;
 		this.userid = userid;
+		this.playerAccuracy = playerAccuracy;
+		this.numPlacements = numPlacements;
+	}
+	
+
+	public int getPlayerAccuracy() {
+		return playerAccuracy;
+	}
+
+	public void setPlayerAccuracy(int playerAccuracy) {
+		this.playerAccuracy = playerAccuracy;
+	}
+
+	public int getNumPlacements() {
+		return numPlacements;
+	}
+
+	public void setNumPlacements(int numPlacements) {
+		this.numPlacements = numPlacements;
 	}
 
 	public String getOccupiedSquares() {
@@ -31,8 +52,11 @@ public class SquareRequestData {
 
 	@Override
 	public String toString() {
-		return "SquareRequestData [occupiedSquares=" + occupiedSquares + ", userid=" + userid + "]";
+		return "SquareRequestData [occupiedSquares=" + occupiedSquares + ", userid=" + userid + ", playerAccuracy="
+				+ playerAccuracy + ", numPlacements=" + numPlacements + "]";
 	}
+
+	
 
 	
 	

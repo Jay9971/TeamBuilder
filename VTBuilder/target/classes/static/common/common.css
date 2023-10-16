@@ -1,8 +1,7 @@
+/*logo styling. class is the container, id is the image itself*/
 .logo {
     height:10%;
-  }
-
-
+}
 #logo {
     height: 100%;
     width: auto;
@@ -140,6 +139,12 @@ body {
     width:100vw;
     height:100vh;
 }
+/*dunno where exactly to put this one*/
+#buttons-container {
+  background-color: transparent;
+  height:20%;
+  width:100%;
+}
 
 /*alternate margin method, all*/
 .space-group {
@@ -162,8 +167,8 @@ body {
     font-weight: bold;
     text-align: center;
     font-family: 'Raleway', sans-serif;
-
 }
+/*player title text*/
 .player-text {
     font-weight: bold;
     text-align: center;
@@ -177,7 +182,8 @@ body {
     cursor: pointer;
     width:100%;
     height:20%; 
-  
+    font-family:'Raleway', sans-serif;
+    font-weight:bold;
     color: white;
   
     border-radius: 50px;
@@ -199,6 +205,26 @@ body {
 .pressed {
     transform: translateY(4px); /* Move the button down by 5 pixels */
     box-shadow: 0px 4px 0px 0px rgba(0, 0, 0);
+}
+#leaveButton {
+  position: absolute;
+  width: 60px;
+  height:30px;
+  top: 2%;
+  right: 2%;
+  box-shadow: 0px 4px 0px 0px rgba(0, 0, 0);
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 60%;
+}
+#leaveButton {
+  background-color: red;
+  color: white;
+}
+#leaveButton:hover {
+  background: orange;
+  color: rgb(113, 113, 157);
 }
 
 /*any input field*/
@@ -223,136 +249,113 @@ body {
     gap:4%;
   }
   
-  /*style for orientation-changing columns (they become rows on a narrow screen), all*/
-  .column {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-  }
+/*style for orientation-changing columns (they become rows on a narrow screen), all*/
+.column {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
   
-  /* changr variable names, like left square and stuff (too vague) */
-  /*left column: has image bank, voice button, player list, leave game*/
-  .square {
-    background-color: rgba(149, 132, 151, 0.739);
-    border-radius: 50px;
-    position: relative;
-  }
-  #left-square {
-    flex-direction: column;
-    background-color: transparent;
-  }
-  #gameSquare {
-    overflow: hidden;
-  }
-
+/* maybe change variable names, like left square and stuff (too vague) */
+/*left square: has image bank, voice button, player list, leave game*/
+/*game square has the grid of pieces*/
+.square {
+  background-color: rgba(149, 132, 151, 0.739);
+  border-radius: 50px;
+  position: relative;
+}
+#left-square {
+  flex-direction: column;
+  background-color: transparent;
+}
+#gameSquare, #assembled-square {
+  position: relative;
+  display: grid;
+  grid-gap:2px;
+  overflow: hidden;
+}
 
 /* mute unmute and player list*/
 #voiceAndPlayerContainer {
-    background-color: rgba(149, 132, 151, 0.739);
-    border-radius: 50px;
-    width: 100%;
-    height: 56%;
-  }
-  
-  /*voice button*/
-  #micContainer{
-    width:47%;
-    height:100%;
-  }
-  #player-list-container {
-    
-    width:47%;
-    height:100%;
-  }
-  #verticalGap {
-    width: 2%;
-    height: 100%;
-  }
-  
-  /*probs should understand all this*/
-  .mic-button {
-    position: relative;
-    background-color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 50%;
-    height: 40%;
-    border-radius: 50%;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 8px 0px rgba(0, 0, 0, 1);
-    overflow: hidden;
-  }
-  .mic-button:hover {
-    background: lightgray;
-  }
-  .pressed {
-    transform: translateY(4px); /* Move the button down by 5 pixels */
-    box-shadow: 0px 4px 0px 0px rgba(0, 0, 0);
-  }
-  .mic-icon {
-    display: block;
-    width: 50%;
-    height: auto;
-  }
-  .muted-overlay {
-    position: absolute;
-    top: -20%;
-    left: -20%;
-    width: 200%;
-    height: 200%;
-    background-color: rgba(255, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: rotate(45deg);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-  .mic-button.muted .muted-overlay {
-    opacity: 1;
-  }
-  .cross-line {
-    width: 100%;
-    height: 10px;
-    background-color: red;
-  }
-
-#player-list-container {
-	overflow: hidden;
+  background-color: rgba(149, 132, 151, 0.739);
+  border-radius: 50px;
+  width: 100%;
+  height: 56%;
 }
+/*voice button*/
+#micContainer{
+  width:47%;
+  height:100%;
+}
+#player-list-container {
+  width:47%;
+  height:100%;
+  overflow: hidden;
+}
+#verticalGap {
+  width: 2%;
+  height: 100%;
+}
+
+/*probs should understand all this. its all mic stuff*/
+.mic-button {
+  position: relative;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 50%;
+  height: 40%;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 0px rgba(0, 0, 0, 1);
+  overflow: hidden;
+}
+.mic-button:hover {
+  background: lightgray;
+}
+.pressed {
+  transform: translateY(4px); /* Move the button down by 5 pixels */
+  box-shadow: 0px 4px 0px 0px rgba(0, 0, 0);
+}
+.mic-icon {
+  display: block;
+  width: 50%;
+  height: auto;
+}
+.muted-overlay {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 200%;
+  height: 200%;
+  background-color: rgba(255, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.mic-button.muted .muted-overlay {
+  opacity: 1;
+}
+.cross-line {
+  width: 100%;
+  height: 10px;
+  background-color: red;
+}
+
 /*player list*/
 #player-list {
 	justify-content: flex-start;
 	height:90%;
 	width:100%;
-	gap: 2%;
-	
+	gap: 2%;	
 }
-
-
-  /*buttons*/
-#buttons-container {
-    background-color: transparent;
-    height:20%;
-    width:100%;
-  }
-  #startButton, #closeButton {
-    height:100%;
-    width:49%;
-  }
-  #closeButton {
-    background-color: red;
-    color: white;
-  }
-  #closeButton:hover {
-    background: orange;
-    color: rgb(113, 113, 157);
-  }
-
 .playerRow {
 	width: 70%;
 	height:10%;
@@ -363,11 +366,6 @@ body {
 	background-color: transparent;
 	font-weight: bold;
 }
-
-
-    
-	
-
 #player {
 	color: black;
 	background-color: transparent;
@@ -385,6 +383,123 @@ body {
 #first-player {
     background-color: green;
 }
+
+/*timer widget, so far only in main game*/
+.timer {
+position: absolute;
+  top: 2%;
+  width: 60px;
+  height: 30px;
+  font-size: 150%;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  color:black;
+}
+.dark-mode .timer {
+  color:white;
+}
+
+/*for the images in game/assembled grid*/
+.image { /* also styles image in game grid*/
+  width: 100%;
+  height: 100%;
+}     
+.canvas {
+  width:100%;
+  height:100%;
+}
+
+
+/* popups for lobby and survey screens */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  z-index: 4; /* Place it on top */
+}
+
+/* Add the rest of your CSS styles here */
+
+.popup {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  top: 35%;
+  left: 35%;
+  background-color: rgb(28, 28, 28);
+  
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-button {
+  height: 20%;
+  width: 50%;
+  margin-top: 10%;
+  
+}
+
+.popup-content {
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  
+}
+
+.popup-title {
+  margin-top: 5%;
+  height:15%;
+  font-weight: bold;
+}
+.popup-text {
+  
+  width: 100%;
+  text-align: center;
+}
+.popup-add {
+  height: 50%;
+}
+.instructions-column {
+  height:70%;
+  align-items: center;
+  width: 100%;
+
+}
+
+.instructions-row {
+  width: 50%;
+  justify-content: center;
+}
+.instructions-image {
+  width: auto;
+  max-width: 50%;
+  max-height: 90%;
+  height:auto;
+  border-radius: 10px;
+  margin-left: 10px;
+  margin-bottom:10px;
+  margin-right:10px;
+
+}
+
+#final-button {
+  height: 30%;
+}
+/*animation overlay, dw a bout it*/
 /*
 .underlying-content {
   display: none;

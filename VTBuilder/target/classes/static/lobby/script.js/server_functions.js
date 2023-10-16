@@ -1,4 +1,4 @@
-
+//add dark mode status variable from substring 
 
 //function specifically for when the start game button is clicked
 async function sendStartGame() {
@@ -30,9 +30,14 @@ async function startGame() {
     }  
 }
 
+//displays lobby code
 const lobbyID = window.location.search.substring(17,21);
 const codeDisplay = document.getElementById("lobbyCode");
 codeDisplay.textContent = "Code: " + lobbyID;
 
-const interval = 1000; // 1000 milliseconds = 1 second
+//repeatedly calls start game to check if the game is started and if players have changed
+const interval = 10; // 1000 milliseconds = 1 second
 const timerId = setInterval(startGame, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
+
+// Show the first popup initially
+showPopup(1,4);
