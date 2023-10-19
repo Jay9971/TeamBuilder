@@ -31,7 +31,7 @@ async function startGame() {
 }
 
 //displays lobby code
-const lobbyID = window.location.search.substring(17,21);
+const lobbyID = window.location.search.substring(34,38);
 const codeDisplay = document.getElementById("lobbyCode");
 codeDisplay.textContent = "Code: " + lobbyID;
 

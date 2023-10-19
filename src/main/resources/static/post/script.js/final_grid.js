@@ -11,7 +11,7 @@ function populateAssembledList() {
  
   // Draw the linked image on the canvas
   ctx.drawImage(refImage, 0, 0); 
-
+	console.log(assembledList);
   // Loop through the coordinates in the final assembled list to create the corresponding images
   for (number of assembledList) {
 
@@ -41,6 +41,7 @@ function populateAssembledList() {
 
       // Generate a new image URL for the square and add it to the assembled url list
       const newImageUrl = squareCanvas.toDataURL("image/jpeg"); // Or "image/png"
+      console.log(newImageUrl);
       assembledURLs.push(newImageUrl);
     } else {
       assembledURLs.push(transp_link);

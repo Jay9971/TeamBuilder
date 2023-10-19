@@ -6,13 +6,13 @@ async function sendSurveyData() {
     try {
 		const val1 = slider1Value.toString();
 		const val2 = slider2Value.toString();
-        await post("/send-survey-data", {
+        const response = await post("/send-survey-data", {
           userid: userID,
           selfRating: val1,
           teamRating: val2
         }, 'application/json');
 		
-		console.log("moving on");
+		console.log(response.userid);
         getStarterData();
              
     } catch (error) {
@@ -38,6 +38,7 @@ async function getStarterData() {
         assembledList = [];
         //adds all coordinates to the list
         numbersString = response.finalOccupiedList;
+        console.log("string " + numbersString);
         for (let i = 0; i < numbersString.length; i += 2) {
             const substring = numbersString.substring(i, i + 2);
             let intValue;
@@ -61,7 +62,13 @@ async function getStarterData() {
         assembledURLs = [];
 
         //calls program after image has loaded
-        img_url.addEventListener('load', callFunctions);
+        
+        
+        refImage = document.createElement("img");
+      	refImage.src = img_url;
+
+      	//once images has loaded, the rest of the program is run
+      	refImage.addEventListener("load", callFunctions);
              
     } catch (error) {
         console.error(error);
@@ -107,7 +114,8 @@ function callFunctions() {
     showPage(3);
 
     /* the container in which the assembled grid resides*/
-    assembledSquare = document.getElementById("assembled-square");
+    assembledSquare = document.getElementById("gameSquare");
+    gapSize = 0;
 
     /* constants for number of rows/columns*/
     rows = Math.sqrt(total_squares);
