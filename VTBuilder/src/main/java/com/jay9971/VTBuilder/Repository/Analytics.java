@@ -14,11 +14,16 @@ public class Analytics {
 	private long id;
 	
 	public Analytics() {
-		id = 0;
+		
 	}
 	
-	public Analytics(int numOfPlayers, String timeElapsed, String teamScore) {
-		id = 0;
+	public Analytics(long id) {
+		this.id = id;
+		
+	}
+	
+	public Analytics(long id, int numOfPlayers, String timeElapsed, String teamScore) {
+		this.id = id;
 		this.numOfPlayers = numOfPlayers;
 		this.timeElapsed = timeElapsed;
 		this.teamScore = teamScore;

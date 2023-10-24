@@ -51,7 +51,7 @@ public class Users {
 		this.teamRating = teamRating;
 	}
 
-	public int getPlayerAccuracy() {
+	public double getPlayerAccuracy() {
 		return playerAccuracy;
 	}
 

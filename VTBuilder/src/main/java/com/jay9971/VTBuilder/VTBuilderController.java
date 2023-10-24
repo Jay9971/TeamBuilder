@@ -326,24 +326,21 @@ public class VTBuilderController {
 			ObjectMapper objMapper = new ObjectMapper();
 			EndGameRequestData rqData = objMapper.readValue(data, EndGameRequestData.class);
 			
-			/*if (analyticsRepo.count() == 0) {
-				Analytics r = new Analytics();
-				analyticsRepo.save(r);
-			}
-			
-			Analytics repo = analyticsRepo.findById((long)0).get();*/
-
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
+			
+			
+			Analytics repo = analyticsRepo.findById((long)user.getLobby()).get();
+
 
 			lobby.setIsStarted(2);
-			//repo.setTimeElapsed(rqData.getTimeElapsed());
+			repo.setTimeElapsed(rqData.getTimeElapsed());
 			
 			archiveRepo.save(lobby);
-			//analyticsRepo.save(repo);
+			analyticsRepo.save(repo);
 			
 			LobbyRequestData dataObj = new LobbyRequestData();
-			dataObj.setUserid("here it is");
+			dataObj.setUserid("");
 			String jsonData = objMapper.writeValueAsString(dataObj);
 			
 		    HttpHeaders headers = new HttpHeaders();
@@ -407,23 +404,23 @@ public class VTBuilderController {
 	@ResponseBody
 	public ResponseEntity<String> postGameTransfer(@RequestBody String data) {
 		try {
-			logger.info("0");
+
 			ObjectMapper objMapper = new ObjectMapper();
 			
 			SquareRequestData rqData = objMapper.readValue(data, SquareRequestData.class);
-			logger.info("1");
+
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
-			//Analytics repo = analyticsRepo.findById((long)0).get();
+			Analytics repo = analyticsRepo.findById((long)user.getLobby()).get();
 			
 			user.setNumPlacements(rqData.getNumPlacements());
 			user.setPlayerAccuracy(rqData.getPlayerAccuracy());
-			logger.info("2");
+
 			
-			/*
-			double totalAccs = 0;
+			//handles analytics data
+			double totalAccs = 0.0;
 			int c = 0;
-			for (long u=0; u < usersRepo.count(); u++) {
+			for (long u=1; u <= usersRepo.count(); u++) {
 				Users us = usersRepo.findById(u).get();
 				if (us.getLobby() == lobby.getId()) {
 					totalAccs += us.getPlayerAccuracy();
@@ -431,16 +428,18 @@ public class VTBuilderController {
 				}
 			}
 			
-			
-			logger.info("3");
+			repo.setNumOfPlayers(c);
+
 			double teamScore = totalAccs/c;
 			DecimalFormat df = new DecimalFormat("0.00"); 
 			String formatTeamScore = df.format(teamScore);
-			//repo.setTeamScore(formatTeamScore);
-			*/
+			repo.setTeamScore(formatTeamScore);
 			
 			
 			
+			
+			
+			// handles sqaure position data
 			
 			String dat = lobby.getData();
 			
@@ -451,7 +450,7 @@ public class VTBuilderController {
 			}
 			
 			
-			logger.info("4");
+
 			String inData = rqData.getOccupiedSquares();
 			logger.info("recieved occ " + inData);
 			
@@ -480,16 +479,17 @@ public class VTBuilderController {
 			lobby.setData(finalData);
 			archiveRepo.save(lobby);
 			usersRepo.save(user);
+			analyticsRepo.save(repo);
 			
-			logger.info("6");
+
 			
 			PostGameUrlData dataObj = new PostGameUrlData("/endgame");
 			String jsonData = objMapper.writeValueAsString(dataObj);
-			logger.info(jsonData);
+
 			
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
-		    logger.info("7");
+
 		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
 		    
 		  
@@ -533,7 +533,7 @@ public class VTBuilderController {
 			Users user = usersRepo.findById((long)Integer.parseInt(rqData.getUserid())).get();
 			Archive lobby = archiveRepo.findById(user.getLobby()).get();
 			ArrayList<String> players = new ArrayList<String>();
-			for (long u=1; u < usersRepo.count(); u++) {
+			for (long u=1; u <= usersRepo.count(); u++) {
 				Users us = usersRepo.findById(u).get();
 				if (us.getLobby() == lobby.getId() && us.getId() != user.getId()) {
 					players.add(us.getName());
@@ -858,6 +858,9 @@ public class VTBuilderController {
 			//Generate new lobby + code
 			long lobbyCode = archiveRepo.count() + 1000;
 			archiveRepo.save(new Archive(lobbyCode, "image-url", "", -1, 0));
+			
+			//Create analytics repo for lobby
+			analyticsRepo.save(new Analytics(lobbyCode));
 			
 			//Generate new user + userid
 			long total_users = usersRepo.count();

@@ -14,7 +14,7 @@ async function sendSurveyData() {
 		
 		console.log(response.userid);
         getStarterData();
-             
+          
     } catch (error) {
         console.error(error);
         // You can re-throw the error if needed
