@@ -16,6 +16,8 @@ create table users (
 	playerAccuracy int not null,
 	numPlacements int not null,
 	audio varchar(255) not null,
+	selfRating varchar(255) not null,
+	teamRating varchar(255) not null,
 	primary key(id)
 );
 
