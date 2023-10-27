@@ -155,7 +155,8 @@ public class VTBuilderController {
 					datas.add(us.getAudio());
 				}
 			}*/
-			//logger.info("1");
+			logger.info("1");
+			/*
 			int totalPlayers = 0;
 			for (long u=1; u <= usersRepo.count(); u++) {
 				Users us = usersRepo.findById(u).get();
@@ -163,17 +164,38 @@ public class VTBuilderController {
 					totalPlayers++;
 				}
 			}
-			//logger.info("2");
+			*/
+			int totalPlayers = 0;
+			for (long u=1; u <= usersRepo.findMaxId(); u++) {
+				Users us;
+				if (usersRepo.findById(u).isPresent()) {
+					us = usersRepo.findById(u).get();
+				} else {
+					us = null;
+				}
+				if (us.getLobby() == lobby.getId()) {
+					totalPlayers++;
+				
+				}
+			}
+			
+			
+			logger.info("2");
+			
 			//String[] datas = new String[totalPlayers];
 			ArrayList<String> datas = new ArrayList<String>();
 			
 			for (int i=0; i < audio.size(); i++) {
 				
-				Users us = usersRepo.findById((long)(i+1)).get();
 				
-				if (user.getId() != us.getId() && user.getLobby() == us.getLobby()) {
-					datas.add(audio.get(i));
+				if (usersRepo.findById((long)(i+1)).isPresent()) {
+					Users us = usersRepo.findById((long)(i+1)).get(); 
+					if (user.getId() != us.getId() && user.getLobby() == us.getLobby()) {
+						datas.add(audio.get(i));
+					}
 				}
+				
+				
 			}
 			
 			String[] send = new String[totalPlayers-1];
@@ -181,14 +203,15 @@ public class VTBuilderController {
 				send[i] = datas.get(i);
 			}
 			
-			//logger.info("3");
+			
+			logger.info("3");
 			AudioResponseData dataObj = new AudioResponseData(send);
 			
 		    String jsonData = objMapper.writeValueAsString(dataObj); 
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
 		    
-		    //logger.info("4");
+		    logger.info("4");
 		    return new ResponseEntity<>(jsonData, headers, HttpStatus.OK);
 		    
 		} catch (Exception e) {
@@ -381,6 +404,7 @@ public class VTBuilderController {
 			PostGameResponseData dataObj = new PostGameResponseData(lobby.getData(), "test score"/*repo.getTeamScore()*/, "analytics");
 
 			
+			// this whole section is no longer relavant
 			int uCount = 0;
 
 			
@@ -517,6 +541,7 @@ public class VTBuilderController {
 
 			
 			//handles analytics data
+			//change to max ID
 			double totalAccs = 0.0;
 			int c = 0;
 			for (long u=1; u <= usersRepo.count(); u++) {
@@ -1022,11 +1047,11 @@ public class VTBuilderController {
 			ObjectMapper objMapper = new ObjectMapper();
 			LoginRequestData rqData = objMapper.readValue(data, LoginRequestData.class);
 			
-			// sends a fuck off request if the game is active
+			// sends a screw off request if the game is active
 			if (archiveRepo.findById((long)Integer.parseInt(rqData.getCode())).get().getIsStarted() == 1) {
 				LoginResponseData dataObj = new LoginResponseData();
 				dataObj.setCode("");
-				dataObj.setUrl("Fuck off");
+				dataObj.setUrl("Game is Active");
 				dataObj.setLobby("");
 				String jsonData = objMapper.writeValueAsString(dataObj);
 			    HttpHeaders headers = new HttpHeaders();
