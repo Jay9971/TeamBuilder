@@ -15,7 +15,7 @@ async function sendSurveyData() {
 		console.log(response.userid);
 		
 		//timer
-        getAnalytics();
+        analyticTimer = setInterval(getAnalytics, 3000);
           
     } catch (error) {
         console.error(error);
@@ -31,7 +31,7 @@ async function getAnalytics() {
         }, 'application/json');
 		
 		if (response.status === "1") {
-			
+			clearInterval(analyticTimer);
 			categorizedWeightsKeys = response.key1;
 		    categorizedWeightsValuess = response.val1;
 		    
