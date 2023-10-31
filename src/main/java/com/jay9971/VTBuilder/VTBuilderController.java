@@ -2,12 +2,14 @@ package com.jay9971.VTBuilder;
 
 
 import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.Timer;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -19,6 +21,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.CsvToBeanFilter;
+
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -156,12 +169,15 @@ public class VTBuilderController {
             String[] newData = new String[numberOfColumns];
             newData[0] = analytics.get("gameNumber").asText();
             newData[1] = analytics.get("teamScore").asText();
-            for (int i=0; i < 1000; i++) {
+            for (int i=2; i < 1000; i++) {
             	Integer num = i+1;
             	String str_convert = num.toString();
-            	newData[i+2] = analytics.get(str_convert).asText();
+            	newData[i] = analytics.get(str_convert).asText();
             }
 
+            //List<String[]> enter = new ArrayList<String[]>();
+            //enter.add(newData);
+            //Maker.writeCSVFile("analytics.csv", enter);
             
            
             BufferedWriter writer = new BufferedWriter(new FileWriter("analytics.csv", true));
@@ -175,8 +191,6 @@ public class VTBuilderController {
                     newDataLine.append("\n");
                 }
             }
-            
-            
             writer.write(newDataLine.toString());
             writer.close();
 
@@ -569,8 +583,8 @@ public class VTBuilderController {
 			// get latest row in analytics.csv
 			// get column 0 value (gameNumber - string)
 			// 
-			int latestVal = Maker.getCSVValue("analytics.csv", Maker.getNumberOfRows("analytics.csv"), 0);
-			latestVal++;
+			int latestVal = Maker.getNumberOfRows("analytics.csv");
+			
 			repo.setRo(latestVal);
 			repo.setPostPlayers( (int) Math.sqrt(lobby.getData().length()/2));
 			
@@ -581,21 +595,24 @@ public class VTBuilderController {
             	newData[i] = 0;
             }
            
+           
+            //Maker.writeIntegersToCSV("analytics.csv", newData);
+            
             BufferedWriter writer = new BufferedWriter(new FileWriter("analytics.csv", true));
 
             StringBuilder newDataLine = new StringBuilder();
-            for (int i = 0; i < numberOfColumns; i++) {
+            /*for (int i = 0; i < numberOfColumns; i++) {
                 newDataLine.append(newData[i]);
                 if (i < numberOfColumns - 1) {
                     newDataLine.append(",");
                 } else {
                     newDataLine.append("\n");
                 }
-            }	
-            
+            }*/
+            newDataLine.append(newData[0]);
             writer.write(newDataLine.toString());
             writer.close();
-			
+           
 			
 			archiveRepo.save(lobby);
 			analyticsRepo.save(repo);	
@@ -635,7 +652,7 @@ public class VTBuilderController {
 			ArrayList<String> csvFileNames = new ArrayList<String>();
 			csvFileNames.add("categorized_weights.csv");
 			csvFileNames.add("impacts.csv");
-			csvFileNames.add("categroy_counts.csv");
+			csvFileNames.add("category_counts.csv");
 			csvFileNames.add("word_counts.csv");
 			
 			SendAnalyticsResponse dataObj;
@@ -710,13 +727,30 @@ public class VTBuilderController {
             repo.setPostPlayers(repo.getPostPlayers()-1);
 			
 			if (repo.getPostPlayers() == 0) {
+				logger.info("running ai");
 				List<String> cmd = new ArrayList<String>();
-				cmd.add("python");
+				cmd.add("./vtenv/bin/python3");
 				cmd.add("ai.py");
-				ProcessBuilder processB = new ProcessBuilder(cmd);
-				Process pro = processB.start();
+				cmd.add("run_script");
+				cmd.add("" + repo.getRo());
+	            ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+	            
+	            processBuilder.redirectErrorStream(true);
+
+	            Process process = processBuilder.start();
+	            
+	            InputStream combinedOutput = process.getInputStream();
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(combinedOutput));
+
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                System.out.println(line);
+	            }
+	            
+	            int exitCode = process.waitFor();
+	            Integer ex = exitCode;
+				logger.info(ex.toString());
 				
-				int code = pro.waitFor();
 				repo.setAiStatus(1);
 			}
 			
@@ -762,24 +796,33 @@ public class VTBuilderController {
 
 			
 			//handles analytics data
+			
 			//change to max ID
 			double totalAccs = 0.0;
 			int c = 0;
-			for (long u=1; u <= usersRepo.count(); u++) {
-				Users us = usersRepo.findById(u).get();
-				if (us.getLobby() == lobby.getId()) {
+			for (long u=1; u <= usersRepo.findMaxId(); u++) {
+				Users us;
+				if (usersRepo.findById(u).isPresent()) {
+					us = usersRepo.findById(u).get();
+				} else {
+					us = null;
+				}
+				
+				if ( us != null && us.getLobby() == lobby.getId()) {
 					totalAccs += us.getPlayerAccuracy();
 					c++;
 				}
 			}
-			
+
 			repo.setNumOfPlayers(c);
 
 			double teamScore = totalAccs/c;
+			Double toLog = teamScore;
+			logger.info(toLog.toString());
+			logger.info("c: " + c);
 			DecimalFormat df = new DecimalFormat("0.00"); 
 			String formatTeamScore = df.format(teamScore);
 			repo.setTeamScore(formatTeamScore);
-			
 			
 			
 			
@@ -789,21 +832,40 @@ public class VTBuilderController {
 			String rowString = row.toString();
 			String accString = repo.getTeamScore();
 			
-			
             
-			List<String> command = new ArrayList<String>();
-            command.add("python"); 
+			List<String> command = new ArrayList<>();
+			command.add("./vtenv/bin/python3");
             command.add("csv_updater.py");
             command.add(keyString);
             command.add(valString);
             command.add(rowString);
             command.add(accString);
+            //logger.info("tran4");
+
+           
 
             ProcessBuilder processBuilder = new ProcessBuilder(command);
+            
+            processBuilder.redirectErrorStream(true);
+
             Process process = processBuilder.start();
             
+            InputStream combinedOutput = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(combinedOutput));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Print or process the output from the Python script
+                System.out.println(line);
+            }
+            
+            //logger.info("tran5");
+            
             int exitCode = process.waitFor();
+            Integer ex = exitCode;
 			
+            //logger.info("tran6");
+            //logger.info(ex.toString());
 
 			
 			

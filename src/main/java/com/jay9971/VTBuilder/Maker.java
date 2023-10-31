@@ -2,8 +2,14 @@ package com.jay9971.VTBuilder;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
 
 public class Maker {
 	
@@ -17,6 +23,41 @@ public class Maker {
 		}
 		return n;
 	}
+	
+	
+    public static void writeIntegersToCSV(String csvFile, int[] data) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile, true))) {
+            String[] stringData = new String[data.length];
+
+            // Convert integers to strings and store them in the string array
+            for (int i = 0; i < data.length; i++) {
+                stringData[i] = String.valueOf(data[i]);
+            }
+
+            // Write the string array to the CSV file
+            writer.writeNext(stringData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+    public static List<String[]> readCSVFile(String csvFile) throws CsvException {
+        try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+            return reader.readAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+	
+	
+    public static void writeCSVFile(String csvFile, List<String[]> data) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile, false))) {
+            writer.writeAll(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	
 	public static int[] getCSVRowInt(String csvFilePath, int row) {
