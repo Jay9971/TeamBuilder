@@ -19,6 +19,8 @@ def return_category(word):
         if word in category_dictionary[key]:
             return key
 
+import csv
+
 # Define the header row
 header = ['gameNumber', 'teamScore']
 for key in category_dictionary:
@@ -37,31 +39,15 @@ with open('analytics.csv', 'w', newline='') as csv_file:
         row = []
         for k in range(len(header)-2):
             word = header[k+2]
-            slope = train_dict[return_category(word)]
-            rise = i*5
-            run = rise/slope
-            datapoint = run
-            print("run ", datapoint)
-            max_rise = 100
-            max_run = 0-max_rise/slope
-            
-            if slope < 0:
-                datapoint += max_run
-
-            upper = round(datapoint * 1.1)
-            lower = round(datapoint * 0.9)
-
-            print(word)
-            print("slope ", slope)
-
-            print("datapoint or run ", datapoint)
-            print("max run, eright translate ", max_run)
-
-            print(lower)
-            print(upper)
+            target = train_dict[return_category(word)]
+            datapoint = target * i/2 *100
+            if target < 0:
+                datapoint += 1000
+            upper = round(datapoint * 1.2)
+            lower = round(datapoint * 0.8)
             entry = random.randint(lower,upper)
             row.append(entry)
-            print(i,", ",word, ", ",slope,", ",datapoint,", ",entry)
+            print(i,", ",word, ", ",target,", ",datapoint,", ",entry)
         row_pre.extend(row)
         writer.writerow(row_pre)
         

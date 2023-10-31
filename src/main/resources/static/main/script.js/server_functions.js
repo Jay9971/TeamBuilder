@@ -35,8 +35,6 @@ let selected = null;
 
 //number of times a player places/removes something (alters the board)
 let num_changes = 0;
-let score;
-let max_distance;
 
 getStarterData();
 
@@ -60,11 +58,8 @@ async function getStarterData() {
       //raise this to second power
       //multiple it by 2 because we are finding the hypotenuse of a isoscleles right triangle
       //sqrt it by pythagorean theorem
-      if (total_squares > 1) {
-		  max_distance = Math.sqrt(Math.pow((Math.floor(Math.sqrt(total_squares)) - 1),2) * 2);
-		} else {
-			max_distance = 1;
-		}
+      max_distance = Math.sqrt(Math.pow((Math.floor(Math.sqrt(total_squares)) - 1),2) * 2);
+
       //which pieces are assigned to this user specifically
       numbersString = response.assignedSquares;
       for (let i = 0; i < numbersString.length; i += 2) {
@@ -100,7 +95,7 @@ async function sendFinalData() {
 
   //list for final squares (by coordinate number 0 (numsquares-1)) occupied by this user
   let occupied = [];
-	
+	console.log("tempDict " + tempDict);
   for (i=0;i<usedList.length;i++) {
     occupied.push("xx");
     if (usedList[i] !== transp_link && usedList[i] !== stripe_link) {
@@ -131,17 +126,12 @@ async function sendFinalData() {
   for (item of occupied) {
     if (item !== "xx") {
 
-	width = Math.sqrt(total_squares);
-      let player_x = tempIndex%width;
-      let player_y = Math.floor(tempIndex/width);
+      let player_x = tempIndex%3;
+      let player_y = Math.floor(tempIndex/3);
 
-      let original_x = item%width;
-      let original_y = Math.floor(item/width);
-	
-	console.log("player x ", player_x);
-	console.log("player y ", player_y);
-	console.log("original x ", original_x);
-	console.log("original y ", original_y);
+      let original_x = item%3;
+      let original_y = Math.floor(item/3);
+
       //pythagorean theorem
       //first take the difference between x's and square, then do the same for the y's and sum them. take the sqrt of all this.
       //this is the distance between the placed square and where its supposed to go.
@@ -149,27 +139,22 @@ async function sendFinalData() {
       
       //this adds each tile's accuracy to score (where 1 is least accurate and 0 us most)
       //instead of dividing score by the number of data points at the end, it does it while adding data
-      console.log("sq ", item);
-      console.log("distance ", distance);
-      console.log("squareacc ", accuracyScore(distance)/tempBank.length);
-     
       score += accuracyScore(distance)/tempBank.length;
-      
     }
-    tempIndex++;
   }
 
-	console.log("max ", max_distance);
   //score is noe from 0 to 100 with two decimals, where 0 is on the opposite side of the board and 100 is dead on
   score = ((1-score)*100).toFixed(2);
-	console.log("scire ", score);
+	console.log("sending " + occupiedStr);
 	
-	let keys = Object.keys(wordCountDict);
-	let values = Object.values(wordCountDict);
-	
+	let keys = [];
+	let values = [];
+	for (key of word_count_dict) {
+		keys.push(key);
+		values.push(word_count_dict[key])
+	}
 	
   try {
-	  
       const response = await post("/send-post-game-transfer-data", {
           userid: userID,
           occupiedSquares: occupiedStr,
@@ -197,7 +182,6 @@ async function getGameState() {
 
       //if game is over, send final data and switch to next page
       if (response.gameStatus === "2") {
-		  clearInterval(stateInterval);
         await sendFinalData();
       } 
 
@@ -309,8 +293,8 @@ function callFunctions() {
 
   
 
-  const interval = 1000; // 1000 milliseconds = 1 second
-  stateInterval = setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
+  const interval = 1; // 1000 milliseconds = 1 second
+  setInterval(getGameState, interval); // every second, calls getGameState, which assigns an updated value to server occupied list and checks if the game is over 
   
   //timer widget in the corner. should be more or less the same for everyone
   startTimer();
