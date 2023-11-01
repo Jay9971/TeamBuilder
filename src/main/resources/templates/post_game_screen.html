@@ -23,6 +23,8 @@
 <script src="post/script.js/loadingAnimation.js" defer></script>
 
 <script src="common/script.js/voice.js" defer></script>
+<script src="post/script.js/barGraphs.js" defer></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 </head>
 <body class="page-loaded">
@@ -39,8 +41,24 @@
   <div class="grid-container2" id="gridContainer2"></div>
   -->
   
+  <div id="info-popup1">
+    <div class="tooltip-line">The word cloud shows the most impactful words used by your team.</div>
+    <div class="tooltip-line">Green words have a positive impact score, which means their use benefitted your team.</div>
+    <div class="tooltip-line">Red words have a negative score, which means they hindered your team.</div>
+    <p>A greater size indicates a greater magnitude of score, which means the word was more impactful. Hover over a word to see its impact score, number of times it was used by your team, and the type of word it is!</p>
+</div>
 
+<div id="info-popup2">
+  <div class="tooltip-line">This graph shows the importance of several categories of words to team performance.</div>
   
+  <p>The size of the bars represent how strongly correlated the usage of words in a particular category is with team performance. For example, a highly positive value would indicate that high scoring teams tend to use words of that category a lot. Hover over a bar to see the category and its importance.</p>
+</div>
+
+<div id="info-popup3">
+  <div class="tooltip-line">This graph shows how many words of each category your team used.</div>
+  <p>Hover over a bar to see the category it represents, examples of words in that category, and how many words in that category your team used.</p>
+</div>
+  <div class="cloud-tooltip-box" id="cloudTooltipBox" style="display: none;"></div>
     <div class="popup-overlay" id="popup-overlay"></div>
       
     <div class="square popup" id="popup-1">
@@ -49,7 +67,7 @@
           <div class="column-container instructions-column">
             <div class = "row-container instructions-row">
               <div class="popup-text popup-add">Before you see your results, please rate your individual and team performance.</div>
-              <button class="button popup-button" onclick="showPopup(2,2)">Next</button>
+              <button class="button popup-button" onclick="showPopup(2,4)">Next</button>
             </div>
             
           </div>
@@ -63,13 +81,89 @@
          
           <div class = "row-container instructions-row">
             <div class="popup-text popup-add">Consider the following when completing the ratings: effective communication, participation, leadership, conflict resolution.</div>
-            <button class="button popup-button" onclick="closePopup(2)">Next</button>
+            <button class="button popup-button" onclick="closePopup(4)">Next</button>
           </div>
           
         </div>
     </div>
 </div>
 
+<div class="square popup insights-popup" id="popup-3">
+  <div class="popup-content">
+      <div class="popup-text insights-title">Insights</div>
+      
+      <div class="column-container instructions-column insights-large-column">
+        <div class = "row-container instructions-row insights-large-row">
+          <div class = "column-container insights-stats-container">
+            <div class = "column row-container cloud-container-container">
+              <div class="cloud-square">
+                <div class="cloud-container" id="wordCloud"></div>
+              </div>
+              <div class="input chart-title wordCloudTitle" id="cloudTitle">Spoken Words</div>
+            </div>
+            <div class = "column row-container graphs-container">
+                <div class = "row graphs">
+                  <div class="chart-container">
+                    <div class="row-container chart-rows">
+                      <div class="chart" id="chart-container1">
+                        
+                      </div>
+                      <div class="input chart-title" id="weights">Category Weights</div>
+  
+                    </div> 
+                    
+                    
+                   </div>
+                </div>
+                <div class = "row graphs">
+                  <div class="chart-container">
+                    
+                    <div class="row-container chart-rows">
+                      <div class="chart" id="chart-container2">
+                        
+                      </div>
+                      <div class="input chart-title"id="counts">Category Counts</div>
+  
+                    </div> 
+                    
+                  </div>
+                </div>
+            </div>
+          </div>
+          
+          
+          
+          
+          <button class="button insights-button" onclick="showPopup(4,4)">Discussion Prompts</button>
+        </div>
+        
+      </div>
+  </div>
+</div>
+
+<div class="square popup discuss" id="popup-4">
+  <div class="popup-content">
+      <div class="insights-title popup-text">Discussion Prompts</div>
+        <div class="column-container instructions-column insights-large-column">
+         
+          <div class = "row-container instructions-row insights-large-row">
+            <div class="space-group prompt-holder">
+              <p class="text2" id="paragraph">Will there be a designated leader, or will everyone have equal control?</p>
+           
+            </div>
+            <div class="space-group prompt-holder">
+              <p class="text2" id="paragraph">How will you describe each of your squares verbally?</p>
+            
+            </div>
+            <div class="space-group prompt-holder">
+              <p class="text2" id="paragraph">How do you plan to resolve a disagreement?</p>
+            </div>
+            <button class="button insights-button" onclick="closePopup(4)">Next</button>
+          </div>
+          
+        </div>
+  </div>
+</div>
 
     <div class="background-container" data-type="mode" >
         <div class="background-vignette" data-type="mode"></div>
@@ -178,6 +272,8 @@
 
        <div class="space-group" id="end"></div>
     </div>
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+    <script src="post/script.js/cloud.js"></script>    
 </body>
 </html>

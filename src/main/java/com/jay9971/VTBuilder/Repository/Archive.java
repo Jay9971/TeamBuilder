@@ -16,6 +16,8 @@ public class Archive {
 	
 	private long newCode;
 	
+	private int squaresCollect;
+	
 	//private String audio;
 	
 	@Id 
@@ -36,6 +38,16 @@ public class Archive {
 		//this.timer = timer;
 	}
 	
+	
+	
+	public int getSquaresCollect() {
+		return squaresCollect;
+	}
+
+	public void setSquaresCollect(int squaresCollect) {
+		this.squaresCollect = squaresCollect;
+	}
+
 	public String getImage() {
 		return image;
 	}

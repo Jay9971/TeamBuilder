@@ -94,7 +94,7 @@ function playAllAudio(audioList) {
 const micButton = document.getElementById('micButton');
 let isMuted = false; // You can change this based on your actual state
 
-micButton.addEventListener('click', () => {
+/*micButton.addEventListener('click', () => {
     isMuted = !isMuted;
     micButton.classList.toggle('muted');
     
@@ -107,7 +107,7 @@ micButton.addEventListener('click', () => {
 	}
     
 });
-
+*/
 function myTimerFunction() {
     if (isMuted === false) {
         stopRecording();

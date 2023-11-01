@@ -22,6 +22,8 @@ public class Users {
 	
 	private String audio;
 	
+	private String finalSquares;
+	
 	@Id
 	private long id;
 	
@@ -37,6 +39,15 @@ public class Users {
 	}
 	
 	
+	
+	public String getFinalSquares() {
+		return finalSquares;
+	}
+
+	public void setFinalSquares(String finalSquares) {
+		this.finalSquares = finalSquares;
+	}
+
 	public String getSelfRating() {
 		return selfRating;
 	}

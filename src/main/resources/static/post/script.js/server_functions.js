@@ -32,17 +32,63 @@ async function getAnalytics() {
 		
 		if (response.status === "1") {
 			clearInterval(analyticTimer);
-			categorizedWeightsKeys = response.key1;
-		    categorizedWeightsValuess = response.val1;
+			categorizedWeightsKeys = response.key1.slice(1);
+		    categorizedWeightsValues = response.val1.slice(1);
 		    
-		    impactDictKeys = response.key2;
-		    impactDictValues = response.val2;
+		    impactDictKeys = response.key2.slice(1);
+		    impactDictValues = response.val2.slice(1);
 		    
-		    categorizedWordsKeys = response.key3;
-		    categorizedWordsValues = response.val3;
+		    categoryCountKeys = response.key3.slice(1);
+		    categoryCountValues = response.val3.slice(1);
 		    
-		    wordCountKeys = response.key4;
-		    wordCountValues = response.val4;
+		    wordCountKeys = response.key4.slice(1);
+		    wordCountValues = response.val4.slice(1);
+
+            catWeightDict = combineListsToDictionary(categorizedWeightsKeys, categorizedWeightsValues);
+            impactDict = combineListsToDictionary(impactDictKeys,impactDictValues);
+            catCountDict = combineListsToDictionary(categoryCountKeys,categoryCountValues);
+            wordCountDict = combineListsToDictionary(wordCountKeys,wordCountValues);
+``			
+			for (const key in impactDict) {
+			  if (impactDict[key] === 0) {
+			    delete impactDict[key];
+			  }
+			}
+			
+			for (const key in wordCountDict) {
+			  if (wordCountDict[key] === 0) {
+			    delete wordCountDict[key];
+			  }
+			}
+			
+			
+			console.log(catWeightDict);
+			console.log(impactDict);
+			console.log(catCountDict);
+			console.log(wordCountDict);
+            createBarGraph("chart-container1", catWeightDict, "Graph 1"); // Pass the graph title
+            createBarGraph("chart-container2", catCountDict, "Graph 2"); // Pass the graph title
+
+            wordCloudData = impactDict;
+            const fontSize = d3.scaleLinear()
+    .domain([0, d3.max(Object.values(wordCloudData))])
+    .range([10, 30]);
+
+const layout = d3.layout.cloud()
+    .size([containerWidth, containerHeight])
+    .words(Object.keys(wordCloudData).map(word => {
+        return {
+            text: word,
+            size: fontSize(Math.abs(wordCloudData[word])),
+            sign: Math.sign(wordCloudData[word]),
+        };
+    }))
+    .padding(5)
+    .rotate(() => 0)
+    .font('Impact')
+    .fontSize(d => d.size)
+    .on('end', drawWordCloud);
+            layout.start();
 			getStarterData();
 		}
 		

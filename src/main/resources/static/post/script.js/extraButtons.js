@@ -1,3 +1,3 @@
 function showAnalytics() {
-    console.log("nun");
+    showPopup(3,3);
 }

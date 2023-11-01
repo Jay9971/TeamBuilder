@@ -697,6 +697,8 @@ public class VTBuilderController {
 						dataObj.setVal3(Maker.getCSVRowInt(csvFileNames.get(file), r*2+1));	
 					} else {
 						System.out.println("fourth");
+						String concatenatedString = String.join(" ", Maker.getCSVRowStr(csvFileNames.get(file), r*2));
+						logger.info(concatenatedString);
 						dataObj.setKey4(Maker.getCSVRowStr(csvFileNames.get(file), r*2));
 						dataObj.setVal4(Maker.getCSVRowInt(csvFileNames.get(file), r*2+1));	
 					}
@@ -1430,3 +1432,5 @@ public class VTBuilderController {
 	}
 	
 }
+
+
