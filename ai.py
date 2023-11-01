@@ -68,7 +68,7 @@ def is_in_category(token,category):
     
 def return_category(word):
     for key in category_dictionary:
-        if word in category_dictionary[key]:
+        if is_in_category(word,category_dictionary[key]):
             return key
     return 0
 
@@ -98,7 +98,7 @@ def add_row_to_file(path, keyDict, rowVal):
         new_row.append(item)
         
     rows.append(new_row)
-
+    rows[0]=new_row
     
     user_number_two = rowVal * 2 + 1
     new_row = [user_number_two]
@@ -232,17 +232,17 @@ def run_script(ROW):
     
     #weight of each category
     weights_categorized = {}
-    
+    new_dict = {key: value for idx, (key, value) in enumerate(last_row_dict.items()) if idx <= 41}
     for cat in category_dictionary:
         weights_categorized[cat] = 0
         count = 0
-        for key in last_row_dict:
+        for key in new_dict:
             if is_in_category(key,category_dictionary[cat]):
                 weights_categorized[cat] += float(weights_dict[key])
                 count += 1
         if count>0:
             weights_categorized[cat] /= count
-    
+    weights_categorized = train_dict
     add_row_to_file('categorized_weights.csv', weights_categorized, ROW)
     
     #comm impact dictionary
