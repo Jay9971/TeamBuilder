@@ -5,6 +5,7 @@ create table archive (
 	squares int not null,
 	isStarted int not null,
 	newCode bigint not null,
+	squareCollect int not null,
 	primary key (id)
 );
 
@@ -18,6 +19,7 @@ create table users (
 	audio varchar(255) not null,
 	selfRating varchar(255) not null,
 	teamRating varchar(255) not null,
+	finalSquare varchar(255) not null,
 	primary key(id)
 );
 
